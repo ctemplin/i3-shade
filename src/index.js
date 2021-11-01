@@ -4,7 +4,9 @@ const i3 = require('i3').createClient();
 const util = require('util')
 
 const exemptComStr = "nop i3-shade-exempt"
-const exemptMarkPat = "shade_exempt_%s"
+const markPref = "shade_"
+const exemptMarkPref = "_shade_exempt_"
+const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
 var fcsdWsNum, fcsdWinId, fcsdWinMarks;
 
@@ -44,13 +46,13 @@ const handleWindowEvent = async function() {
         nodes.find(_ => _.type == 'workspace' && _.num == fcsdWsNum).
         floating_nodes.flatMap(_ => _.nodes);
         if (fnodes.length) {
-          fnodes.filter(node => !node.marks.some( mark => mark.startsWith("shade_"))).map(node => {
+          fnodes.filter(node => !node.marks.some( mark => mark.startsWith(exemptMarkPref))).map(node => {
             if (true) {
               let winHeight = node.rect.height + node.deco_rect.height - peekMargin
               i3.command(
                 util.format(
-                  '[con_id=%s] mark --add shade_%d_%d_%s, move position %d px -%d px', 
-                  node.id, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
+                  '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px', 
+                  node.id, markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
                 ),
                 function(err, resp) { console.log(err, resp) }  
               )
@@ -62,7 +64,7 @@ const handleWindowEvent = async function() {
     // Floating window focused
     else {
       let foccon = arguments[0].container
-      let mark = foccon.marks.filter(mark => mark.startsWith("shade_") && !mark.startsWith("shade_exempt"))[0]
+      let mark = foccon.marks.filter(mark => mark.startsWith(markPref) && !mark.startsWith(exemptMarkPref))[0]
       if (mark) {
         let toks = mark.split("_")
         i3.command(
