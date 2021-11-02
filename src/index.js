@@ -1,11 +1,26 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --title=i3-shade
 
 const i3 = require('i3').createClient();
 const util = require('util')
 
-const exemptComStr = "nop i3-shade-exempt"
-const markPref = "shade_"
-const exemptMarkPref = "_shade_exempt_"
+// Parse args, if any
+const args = require('minimist')(process.argv.slice(2))
+
+// Validation: no underscores in prefixes
+const badPrefs = [args.prefix, args.exempt].filter(_ => _ && _.indexOf("_") > -1)
+if (badPrefs.length) {
+  console.error("ERROR, option(s) contain illegal underscores: %s\n",
+  badPrefs.join(" "))
+  process.exit(1)
+}
+delete badPrefs
+
+// Format strings
+const exemptComStr = args.command ?? "nop i3-shade-exempt"
+const markPref = (args.prefix ?? "shade") + "_"
+const exemptMarkPref = "_" + (args.exempt ?? "shade_exempt") + "_"
+console.log(exemptComStr, markPref, exemptMarkPref)
+
 const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
 var fcsdWsNum, fcsdWinId, fcsdWinMarks;
@@ -60,6 +75,7 @@ const handleWindowEvent = async function() {
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
             node.id, markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
           )
+          console.log(node.id, markCom)
           i3.command(markCom, (err, resp) => {
             // console.log(err, resp)
           })
