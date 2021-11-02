@@ -64,7 +64,7 @@ const handleWindowEvent = async function() {
     // Floating window focused
     else {
       let foccon = arguments[0].container
-      let mark = foccon.marks.filter(mark => mark.startsWith(markPref) && !mark.startsWith(exemptMarkPref))[0]
+      let mark = foccon.marks.find(mark => mark.startsWith(markPref) && !mark.startsWith(exemptMarkPref))
       if (mark) {
         let toks = mark.split("_")
         i3.command(
