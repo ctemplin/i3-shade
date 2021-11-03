@@ -2,14 +2,35 @@
 
 const i3 = require('i3').createClient();
 const util = require('util')
+const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
 
 // Parse args, if any
 const args = require('minimist')(process.argv.slice(2))
+if (args.h || args.help) {
+  args.h ?
+  console.log(usage)
+  :
+  console.log("i3-shade\n\
+    -h            Show brief usage summary.\n\
+    --help        Show this message.\n\
+    --prefix=<string>\n\
+                  Defaults to \"shade\". Included in mark that stores \n\
+                  floating window position. No need to set unless default\n\
+                  conflicts with other marks.\n\
+                  <prefix>_<x>_<y>_<con_id> \n\
+    --exempt=<string>\n\
+                  Defaults to \"shade_exempt\". Included in mark that exempts\n\
+                  containers from shading. No need to set unless default\n\
+                  conflicts with other marks.\n\
+                  _<exempt>_<con_id> \n\
+");
+  process.exit(0);
+}
 
 // Validation: no underscores in prefixes
 const badPrefs = [args.prefix, args.exempt].filter(_ => _ && _.indexOf("_") > -1)
 if (badPrefs.length) {
-  console.error("ERROR, option(s) contain illegal underscores: %s\n",
+  console.error("ERROR, remove/replace underscores in option value(s): %s\n",
   badPrefs.join(" "))
   process.exit(1)
 }
