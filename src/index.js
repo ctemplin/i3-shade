@@ -38,9 +38,18 @@ delete badPrefs
 
 // Format strings
 const exemptComStr = args.command ?? "nop i3-shade-exempt"
+delete args.command
 const markPref = (args.prefix ?? "shade") + "_"
+delete args.prefix
 const exemptMarkPref = "_" + (args.exempt ?? "shade_exempt") + "_"
-console.log(exemptComStr, markPref, exemptMarkPref)
+delete args.exempt
+
+// Extraneous options
+if (Object.keys(args).length > 1) {
+  console.error("Invalid option(s):", Object.keys(args).slice(1).join(" "))
+  process.exit(1)
+}
+delete args
 
 const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
