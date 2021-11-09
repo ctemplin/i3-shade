@@ -99,7 +99,6 @@ const handleWindowEvent = async function() {
         }
         // Filter for eligble windows and loop through them.
         fnodes.filter(node => isUnmarked(node)).map(node => {
-          console.log('loop', fcsdWsNum, Date())
           let winHeight = node.rect.height + node.deco_rect.height - peekMargin
           let markCom = util.format(
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
@@ -107,7 +106,9 @@ const handleWindowEvent = async function() {
           )
           console.log(node.id, markCom)
           i3.command(markCom, (err, resp) => {
-            // console.log(err, resp)
+            if (err) {
+              console.error(err)
+            }
           })
         })
       })
@@ -120,7 +121,11 @@ const handleWindowEvent = async function() {
         let toks = mark.split("_")
         i3.command(
           util.format('unmark %s, move position %d px %d px', mark, toks[1], toks[2]-foccon.deco_rect.height),
-          (err, resp) => {}
+          (err, resp) => {
+            if (err) {
+              console.error(err)
+            }
+          }
         )
       }
     }
