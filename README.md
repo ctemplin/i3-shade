@@ -1,16 +1,26 @@
 # i3-shade
-Auto show/hide floating windows in the [i3 window manager](/i3/i3).
+Auto show/hide floating windows in the [i3 window manager](https://github.com/i3/i3).
 
 ## Install
-> ```
-> $ git clone --depth=1 https://github.com/ctemplin/i3-shade.git
-#### OR
-> ```
-> $ npx degit github.com/ctemplin/i3-shade.git i3-shade 
+from npm. Using [nvm](https://github.com/nvm-sh/nvm) can ease permissions issues.
+> ```$ npm install -g i3-shade```
 
-> ```
+from source
+
+> ```$ git clone --depth=1 https://github.com/ctemplin/i3-shade.git```
+
+    OR
+
+> ```$ npx degit github.com/ctemplin/i3-shade.git i3-shade ```
+
+    THEN
+
+> ~~~
 > $ cd i3-shade
 > $ npm install
+> $ # link from a directory on your $PATH
+> $ ln -s /usr/local/bin/i3-shade ./src/index.js
+> ~~~
 
 ## Config
 Note: Disabling `focus_follows_mouse` is recommended. Otherwise, floating windows may disappear unexpectedly.
@@ -31,12 +41,12 @@ Add a key combination to exempt the current window from shading.
 ## Run
 In terminal:
 > ```
-> $ i3-shade/src/index.js &
+> $ i3-shade &
 
 Automatically:
 > ```
 > # ~/.i3/config
-> exec_always --no-startup-id ~/Documents/i3-shade/src/index.js
+> exec_always --no-startup-id i3-shade
 
 > ```
 > $ i3-msg restart
