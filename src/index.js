@@ -91,14 +91,22 @@ const handleWindowEvent = async function() {
         nodes.find(_ => _.type == 'con' && _.name == 'content').
         nodes.find(_ => _.type == 'workspace' && _.num == fcsdWsNum).
         floating_nodes.flatMap(_ => _.nodes);
+
+        const isNormalOrUnknown = function(node) {
+          return ["normal", "unknown"].includes(node.window_type)
+        }
         // Test of window eligiblility (neither exempted nor already shaded)
         const isUnmarked = function(node) {
           return !node.marks.some( _ => 
             _.startsWith(markPref) || _.startsWith(exemptMarkPref)
           )
         }
+        const isEligible = function(node) {
+          return isNormalOrUnknown(node) && isUnmarked(node)
+        }
+
         // Filter for eligble windows and loop through them.
-        fnodes.filter(node => isUnmarked(node)).map(node => {
+        fnodes.filter(node => isEligible(node)).map(node => {
           let winHeight = node.rect.height + node.deco_rect.height - peekMargin
           let markCom = util.format(
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
