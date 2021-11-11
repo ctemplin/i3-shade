@@ -2,58 +2,70 @@
 Auto show/hide floating windows in the [i3 window manager](https://github.com/i3/i3).
 
 ## Install
-from npm. Using [nvm](https://github.com/nvm-sh/nvm) can ease permissions issues.
-> ```$ npm install -g i3-shade```
+from npm:
+~~~
+$ npm install -g i3-shade
+~~~
 
-from source
+>using [nvm](https://github.com/nvm-sh/nvm) can ease permissions issues
 
-> ```$ git clone --depth=1 https://github.com/ctemplin/i3-shade.git```
+from source:
 
-    OR
+~~~
+$ git clone --depth=1 https://github.com/ctemplin/i3-shade.git
+~~~
 
-> ```$ npx degit github.com/ctemplin/i3-shade.git i3-shade ```
+OR
 
-    THEN
+~~~
+$ npx degit github.com/ctemplin/i3-shade.git i3-shade
+~~~
 
-> ~~~
-> $ cd i3-shade
-> $ npm install
-> $ # link from a directory on your $PATH
-> $ ln -s /usr/local/bin/i3-shade ./src/index.js
-> ~~~
+THEN
+
+~~~
+$ cd i3-shade
+$ npm install
+$ # link from a directory on your $PATH
+$ ln -s /usr/local/bin/i3-shade ./src/index.js
+~~~
 
 ## Config
-Note: Disabling `focus_follows_mouse` is recommended. Otherwise, floating windows may disappear unexpectedly.
-> ```
-> # ~/.i3/config
-> focus_follows_mouse no
-
+Disabling `focus_follows_mouse` is recommended. Otherwise, floating windows may disappear unexpectedly.
+~~~
+# ~/.i3/config
+focus_follows_mouse no
+~~~
 
 Add a key combination to exempt the current window from shading.
-> ```
-> # ~/.i3/config
-> bindsym $mod+Ctrl+space nop i3-shade-exempt
+~~~
+# ~/.i3/config
+bindsym $mod+Ctrl+space nop i3-shade-exempt
+~~~
 
->```
-> $ i3-msg reload
+~~~
+$ i3-msg reload
+~~~
 
 
 ## Run
 In terminal:
-> ```
-> $ i3-shade &
-
+~~~
+$ i3-shade &
+~~~
 Automatically:
-> ```
-> # ~/.i3/config
-> exec_always --no-startup-id i3-shade
+~~~
+# ~/.i3/config
+exec_always --no-startup-id i3-shade
+~~~
 
-> ```
-> $ i3-msg restart
+~~~
+$ i3-msg restart
+~~~
 
 
 ## Options
-> ```
+> ~~~
 > i3-shade
 >     usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]
 >     -h            Show brief usage summary.
@@ -68,3 +80,4 @@ Automatically:
 >                   containers from shading. No need to set unless default
 >                   conflicts with other marks.
 >                   _<exempt>_<con_id>
+> ~~~
