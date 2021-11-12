@@ -3,22 +3,31 @@
   "version": "0.2.1",
   "description": "Auto show/hide floating windows in i3",
   "main": "src/index.js",
-  "bin" : { "i3-shade" : "src/index.js" },
+  "bin": {
+    "i3-shade": "src/index.js"
+  },
   "preferGlobal": true,
   "scripts": {
     "start": "src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "homepage": "https://github.com/ctemplin/i3-shade",
   "repository": {
     "type": "git",
     "url": "https://github.com/ctemplin/i3-shade.git"
   },
-  "keywords": ["i3", "i3wm", "floating", "tiling", "window", "manager"],
+  "keywords": [
+    "i3",
+    "i3wm",
+    "floating",
+    "tiling",
+    "window",
+    "manager"
+  ],
   "author": "Chris Templin <ctemplin@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "i3": "^0.3.0",
     "minimist": "^1.2.5"
-  },
-  "homepage": "https://github.com/ctemplin/i3-shade"
+  }
 }
