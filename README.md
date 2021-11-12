@@ -2,26 +2,26 @@
 Auto show/hide floating windows in the [i3 window manager](https://github.com/i3/i3).
 
 ## Install
-from npm:
+### from npm:
 ~~~
 $ npm install -g i3-shade
 ~~~
 
 >using [nvm](https://github.com/nvm-sh/nvm) can ease permissions issues
 
-from source:
+### from source:
 
 ~~~
 $ git clone --depth=1 https://github.com/ctemplin/i3-shade.git
 ~~~
 
-OR
+#### OR
 
 ~~~
 $ npx degit github.com/ctemplin/i3-shade.git i3-shade
 ~~~
 
-THEN
+#### THEN
 
 ~~~
 $ cd i3-shade
@@ -49,11 +49,11 @@ $ i3-msg reload
 
 
 ## Run
-In terminal:
+### In terminal:
 ~~~
 $ i3-shade &
 ~~~
-Automatically:
+### Automatically:
 ~~~
 # ~/.i3/config
 exec_always --no-startup-id i3-shade
