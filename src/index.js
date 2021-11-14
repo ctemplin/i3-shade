@@ -60,15 +60,15 @@ i3.workspaces((err, json) => {
   fcsdWsNum = json.find(ws => ws.focused).num
 })
 
-const handleWorkspaceEvent = function() {
-  if (arguments[0].change == "focus") {
-    fcsdWsNum = arguments[0].current.num
+const handleWorkspaceEvent = function(event) {
+  if (ev.change == "focus") {
+    fcsdWsNum = event.current.num
   }
 }
 
-const handleBindingEvent = function() {
+const handleBindingEvent = function(event) {
   // Toggle mark to exempt from shading
-  if (arguments[0]?.binding?.command == exemptComStr) {
+  if (event.binding?.command == exemptComStr) {
     let mark = util.format(exemptMarkPat, fcsdWinId)
     i3.command(
       util.format('[con_id=%s] mark --add --toggle %s', fcsdWinId, mark),
@@ -77,11 +77,11 @@ const handleBindingEvent = function() {
   }
 }
 
-const handleWindowEvent = async function() {
-  fcsdWinId = arguments[0].container.id
-  fcsdWinMarks = arguments[0].container.marks
-  if (arguments[0].change == 'focus') {
-    let float_val = arguments[0].container.floating
+const handleWindowEvent = async function(event) {
+  fcsdWinId = event.container.id
+  fcsdWinMarks = event.container.marks
+  if (event.change == 'focus') {
+    let float_val = event.container.floating
     // Tiled window focused
     if (['user_off', 'auto_off'].includes(float_val) ) {
       i3.tree((err, resp) => {
@@ -112,7 +112,6 @@ const handleWindowEvent = async function() {
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
             node.id, markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
           )
-          console.log(node.id, markCom)
           i3.command(markCom, (err, resp) => {
             if (err) {
               console.error(err)
@@ -123,7 +122,7 @@ const handleWindowEvent = async function() {
     }
     // Floating window focused
     else {
-      let foccon = arguments[0].container
+      let foccon = event.container
       let mark = foccon.marks.filter(mark => mark.startsWith(markPref) && !mark.startsWith(exemptMarkPref))[0]
       if (mark) {
         let toks = mark.split("_")
