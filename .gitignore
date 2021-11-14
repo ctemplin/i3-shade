@@ -10,3 +10,6 @@ yarn-error.log*
 .vscode/launch.json
 .vscode/settings.json
 workspace.code-workspace
+
+# tests
+tests/*.socket
