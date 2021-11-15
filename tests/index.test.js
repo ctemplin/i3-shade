@@ -1,15 +1,24 @@
-const jestConfig = require("../jest.config")
-const net = require('node:net')
+const { globals } = require("../jest.config")
 
-describe('Index', () => {
-  it('runs a test', () => {
-    let v = 1
-    expect(v).toEqual(1)
+describe('IPC daemon', () => {
+  it('gets the global socket', () => {
+    expect(globals.__SOCKET_PATH).not.toBeNull()
+  })
+})
+
+describe('i3-ipc', () => {
+  it('connects to the IPC daemon', done => {
+    function cb(err, json) {
+      try {
+        if (err) { done(err); return; }
+        expect(json[0].success).toBeTruthy()
+        done()
+      } catch(error) {
+        done(error)
+      }
+    }
+    require('i3').createClient({ path: globals.__SOCKET_PATH__ })
+    .command('workspace 1', cb)
   })
 
-  it('initializes an IPC connection', () => {
-    const i3 = require('i3').createClient((c) => {
-      expect(i3._stream).toBeInstanceOf(net.Socket)
-    })
-  })
 })
