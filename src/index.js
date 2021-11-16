@@ -4,6 +4,12 @@ const i3 = require('i3').createClient();
 const util = require('util')
 const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
 
+const argDefaults = {
+  command: "nop i3-shade-exempt",
+  prefix: "shade",
+  exempt: "shade_exempt"
+}
+
 // Parse args, if any
 const args = require('minimist')(process.argv.slice(2))
 if (args.h || args.help) {
@@ -34,22 +40,23 @@ if (badPrefs.length) {
   badPrefs.join(" "))
   process.exit(1)
 }
-delete badPrefs
 
 // Format strings
-const exemptComStr = args.command ?? "nop i3-shade-exempt"
-delete args.command
-const markPref = (args.prefix ?? "shade") + "_"
-delete args.prefix
-const exemptMarkPref = "_" + (args.exempt ?? "shade_exempt") + "_"
-delete args.exempt
+const exemptComStr = args.command ?? argDefaults.command
+const markPref = (args.prefix ?? argDefaults.prefix) + "_"
+const exemptMarkPref = "_" + (args.exempt ?? argDefaults.exempt) + "_"
 
 // Extraneous options
-if (Object.keys(args).length > 1) {
-  console.error("Invalid option(s):", Object.keys(args).slice(1).join(" "))
+const argKeys = Object.keys(args).slice(1)
+const argDefaultsKeys = Object.keys(argDefaults)
+const isNotInDefaults = key => !argDefaultsKeys.includes(key)
+if (argKeys.some(isNotInDefaults)) {
+  console.error(
+    "Invalid option(s):", 
+    argKeys.filter(isNotInDefaults).join(", ")
+  )
   process.exit(1)
 }
-delete args
 
 const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
