@@ -1,9 +1,9 @@
 #!/usr/bin/env -S node --title=i3-shade
 
-const i3 = require('i3').createClient();
 const util = require('util')
 const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
 
+console.log('here i am')
 // Parse args, if any
 const args = require('minimist')(process.argv.slice(2))
 if (args.h || args.help) {
@@ -23,6 +23,8 @@ if (args.h || args.help) {
                   containers from shading. No need to set unless default\n\
                   conflicts with other marks.\n\
                   _<exempt>_<con_id> \n\
+    --socketpath=<string>\n\
+                  Defaults to output of `i3 --get-socketpath`.\n\
 ");
   process.exit(0);
 }
@@ -34,26 +36,30 @@ if (badPrefs.length) {
   badPrefs.join(" "))
   process.exit(1)
 }
-delete badPrefs
+//delete badPrefs
 
 // Format strings
 const exemptComStr = args.command ?? "nop i3-shade-exempt"
-delete args.command
+// delete args.command
 const markPref = (args.prefix ?? "shade") + "_"
-delete args.prefix
+// delete args.prefix
 const exemptMarkPref = "_" + (args.exempt ?? "shade_exempt") + "_"
 delete args.exempt
+const socketPath = args.socketpath ?? ""
+// delete args.socketpath
 
 // Extraneous options
-if (Object.keys(args).length > 1) {
-  console.error("Invalid option(s):", Object.keys(args).slice(1).join(" "))
-  process.exit(1)
-}
-delete args
+// if (Object.keys(args).length > 1) {
+//   console.error("Invalid option(s):", Object.keys(args).slice(1).join(" "))
+//   process.exit(1)
+// }
+// delete args
 
 const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
 var fcsdWsNum, fcsdWinId, fcsdWinMarks;
+
+const i3 = require('i3').createClient(socketPath);
 
 // Get the initial focused WS num
 i3.workspaces((err, json) => {
@@ -68,6 +74,7 @@ const handleWorkspaceEvent = function(event) {
 
 const handleBindingEvent = function(event) {
   // Toggle mark to exempt from shading
+  console.log(event.binding.command)
   if (event.binding?.command == exemptComStr) {
     let mark = util.format(exemptMarkPat, fcsdWinId)
     i3.command(

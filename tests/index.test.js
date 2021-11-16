@@ -1,3 +1,4 @@
+const { Server } = require("http")
 const { globals } = require("../jest.config")
 
 describe('IPC daemon', () => {
@@ -7,6 +8,10 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-ipc', () => {
+  var i3
+  beforeAll(() => {
+    i3 = require('i3').createClient({ path: globals.__SOCKET_PATH__ })
+  })
   it('connects to the IPC daemon', done => {
     function cb(err, json) {
       try {
@@ -17,8 +22,41 @@ describe('i3-ipc', () => {
         done(error)
       }
     }
-    require('i3').createClient({ path: globals.__SOCKET_PATH__ })
-    .command('workspace 1', cb)
+    
+    i3.command('workspace 1', cb)
+  })
+
+  describe('i3-shade', () => {
+    var shadeProc
+
+    beforeAll(() =>{
+      shadeProc = require('child_process').spawn(
+        'node',
+        ['--title', 'i3-shade-jest', '--', 'src/index.js', '--prefix=shade-jest', '--exempt=shade-jest-exempt', '--socketpath=' + globals.__SOCKET_PATH__],
+        { stdio: 'pipe' }
+      )
+    })
+
+    afterAll(() => {
+      shadeProc.kill()
+    })
+
+    it('does it', done => {
+      //console.log(shadeProc._handle.pid)
+      try {
+        shadeProc.stdout.on('data', (d) => {
+          console.log(d.toString())
+          expect(d.toString()).toEqual(5)
+          done()
+        })
+        globals.__SERVER__.emit('binding')
+        globals.__SERVER__.emit('binding')
+      } catch (err) {
+        console.error(err)
+        done(err)
+      }
+    })
+
   })
 
 })

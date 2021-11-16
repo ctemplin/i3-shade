@@ -2,7 +2,7 @@ const { globals } = require('../jest.config');
 const path = require('path');
 
 var server
-const I3_MAGIC     = new Buffer.from('i3-ipc');
+const I3_MAGIC = new Buffer.from('i3-ipc');
 
 function encodeCommand(code, payload) {
   if (!payload)
@@ -25,6 +25,9 @@ beforeAll(() => {
   server = require('net').createServer({}, (conn) => {
     conn.on('data', (msg) => {
       msg = msg.toString()
+      if (msg.indexOf("mark") > -1) {
+        console.log('mark')
+      }
       if (msg === "i3-ipc") {
         conn.write(encodeCommand(0))
       } else {
@@ -32,8 +35,16 @@ beforeAll(() => {
         conn.write(encodeCommand(0, payload))
       }
     })
+
+    server.on('binding', done => {
+      console.log('handling binding event')
+      var payload = '{ "change": "run", "binding": { "command": "nop i3-shade-exempt", "event_state_mask": [ "shift", "ctrl"  ], "input_code": 0, "symbol": "t", "input_type": "keyboard" }}'
+      conn.write(encodeCommand((0x80000005), payload))
+    })
+
   });
   server.listen(globals.__SOCKET_PATH__)
+  globals.__SERVER__ = server
 })
 
 afterAll(() => {
