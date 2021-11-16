@@ -80,4 +80,7 @@ $ i3-msg restart
 >                   containers from shading. No need to set unless default
 >                   conflicts with other marks.
 >                   _<exempt>_<con_id>
+>     --command=<string>
+>                   Defaults to "nop i3-shade-exempt". The i3 command to toggle
+>                   the shading exemption for the focused window.
 > ~~~

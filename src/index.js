@@ -2,12 +2,12 @@
 
 const i3 = require('i3').createClient();
 const sprintf = require('sprintf-js').sprintf
-const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
+const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>] [--command=<string>]"
 
 const argDefaults = {
-  command: "nop i3-shade-exempt",
   prefix: "shade",
-  exempt: "shade_exempt"
+  exempt: "shade_exempt",
+  command: "nop i3-shade-exempt"
 }
 
 // Parse args, if any
@@ -29,6 +29,9 @@ if (args.h || args.help) {
                   containers from shading. No need to set unless default\n\
                   conflicts with other marks.\n\
                   _<exempt>_<con_id> \n\
+    --command=<string>\n\
+                  Defaults to \"nop i3-shade-exempt\". The i3 command to toggle\n\
+                  the shading exemption for the focused window. \n\
 ");
   process.exit(0);
 }
