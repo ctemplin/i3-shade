@@ -1,7 +1,7 @@
 #!/usr/bin/env -S node --title=i3-shade
 
 const i3 = require('i3').createClient();
-const util = require('util')
+const sprintf = require('sprintf-js').sprintf
 const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
 
 const argDefaults = {
@@ -76,9 +76,9 @@ const handleWorkspaceEvent = function(event) {
 const handleBindingEvent = function(event) {
   // Toggle mark to exempt from shading
   if (event.binding?.command == exemptComStr) {
-    let mark = util.format(exemptMarkPat, fcsdWinId)
+    let mark = sprintf(exemptMarkPat, fcsdWinId)
     i3.command(
-      util.format('[con_id=%s] mark --add --toggle %s', fcsdWinId, mark),
+      sprintf('[con_id=%s] mark --add --toggle %s', fcsdWinId, mark),
       (err, resp) => {}
     )
   }
@@ -115,7 +115,7 @@ const handleWindowEvent = async function(event) {
         // Filter for eligble windows and loop through them.
         fnodes.filter(node => isEligible(node)).map(node => {
           let winHeight = node.rect.height + node.deco_rect.height - peekMargin
-          let markCom = util.format(
+          let markCom = sprintf(
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
             node.id, markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
           )
@@ -134,7 +134,7 @@ const handleWindowEvent = async function(event) {
       if (mark) {
         let toks = mark.split("_")
         i3.command(
-          util.format('unmark %s, move position %d px %d px', mark, toks[1], toks[2]-foccon.deco_rect.height),
+          sprintf('unmark %s, move position %d px %d px', mark, toks[1], toks[2]-foccon.deco_rect.height),
           (err, resp) => {
             if (err) {
               console.error(err)
