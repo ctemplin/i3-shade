@@ -9,4 +9,4 @@ yarn-error.log*
 # editor
 .vscode/launch.json
 .vscode/settings.json
-workspace.code-workspace
+*.code-workspace
