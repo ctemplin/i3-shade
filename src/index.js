@@ -36,11 +36,9 @@ if (args.h || args.help) {
   process.exit(0);
 }
 
-// Validation: no underscores in prefixes
-const badPrefs = [args.prefix, args.exempt].filter(_ => _ && _.indexOf("_") > -1)
-if (badPrefs.length) {
-  console.error("ERROR, remove/replace underscores in option value(s): %s\n",
-  badPrefs.join(" "))
+// Validation: no underscores in prefix
+if (args.prefix && args.prefix.indexOf("_") > -1) {
+  console.error("ERROR, remove/replace underscore(s) in prefix option")
   process.exit(1)
 }
 
