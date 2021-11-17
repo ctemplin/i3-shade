@@ -69,7 +69,7 @@ i3.workspaces((err, json) => {
 })
 
 const handleWorkspaceEvent = function(event) {
-  if (ev.change == "focus") {
+  if (event.change == "focus") {
     fcsdWsNum = event.current.num
   }
 }
