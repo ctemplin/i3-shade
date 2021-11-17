@@ -1,6 +1,6 @@
 {
   "name": "i3-shade",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "Auto show/hide floating windows in i3",
   "main": "src/index.js",
   "bin": {
@@ -29,7 +29,8 @@
   "license": "ISC",
   "dependencies": {
     "i3": "^0.3.0",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
     "jest": "^27.3.1"

@@ -1,7 +1,13 @@
 #!/usr/bin/env -S node --title=i3-shade
 
-const util = require('util')
-const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]"
+const sprintf = require('sprintf-js').sprintf
+const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>] [--command=<string>]"
+
+const argDefaults = {
+  prefix: "shade",
+  exempt: "shade_exempt",
+  command: "nop i3-shade-exempt"
+}
 
 console.log('here i am')
 // Parse args, if any
@@ -25,35 +31,36 @@ if (args.h || args.help) {
                   _<exempt>_<con_id> \n\
     --socketpath=<string>\n\
                   Defaults to output of `i3 --get-socketpath`.\n\
+    --command=<string>\n\
+                  Defaults to \"nop i3-shade-exempt\". The i3 command to toggle\n\
+                  the shading exemption for the focused window. \n\
 ");
   process.exit(0);
 }
 
-// Validation: no underscores in prefixes
-const badPrefs = [args.prefix, args.exempt].filter(_ => _ && _.indexOf("_") > -1)
-if (badPrefs.length) {
-  console.error("ERROR, remove/replace underscores in option value(s): %s\n",
-  badPrefs.join(" "))
+// Validation: no underscores in prefix
+if (args.prefix && args.prefix.indexOf("_") > -1) {
+  console.error("ERROR, remove/replace underscore(s) in prefix option")
   process.exit(1)
 }
-//delete badPrefs
 
 // Format strings
-const exemptComStr = args.command ?? "nop i3-shade-exempt"
-// delete args.command
-const markPref = (args.prefix ?? "shade") + "_"
-// delete args.prefix
-const exemptMarkPref = "_" + (args.exempt ?? "shade_exempt") + "_"
-delete args.exempt
+const exemptComStr = args.command ?? argDefaults.command
+const markPref = (args.prefix ?? argDefaults.prefix) + "_"
+const exemptMarkPref = "_" + (args.exempt ?? argDefaults.exempt) + "_"
 const socketPath = args.socketpath ?? ""
-// delete args.socketpath
 
 // Extraneous options
-// if (Object.keys(args).length > 1) {
-//   console.error("Invalid option(s):", Object.keys(args).slice(1).join(" "))
-//   process.exit(1)
-// }
-// delete args
+const argKeys = Object.keys(args).slice(1)
+const argDefaultsKeys = Object.keys(argDefaults)
+const isNotInDefaults = key => !argDefaultsKeys.includes(key)
+if (argKeys.some(isNotInDefaults)) {
+  console.error(
+    "Invalid option(s):", 
+    argKeys.filter(isNotInDefaults).join(", ")
+  )
+  process.exit(1)
+}
 
 const exemptMarkPat = exemptMarkPref + "%s"
 const peekMargin = 2;
@@ -67,7 +74,7 @@ i3.workspaces((err, json) => {
 })
 
 const handleWorkspaceEvent = function(event) {
-  if (ev.change == "focus") {
+  if (event.change == "focus") {
     fcsdWsNum = event.current.num
   }
 }
@@ -76,9 +83,9 @@ const handleBindingEvent = function(event) {
   // Toggle mark to exempt from shading
   console.log(event.binding.command)
   if (event.binding?.command == exemptComStr) {
-    let mark = util.format(exemptMarkPat, fcsdWinId)
+    let mark = sprintf(exemptMarkPat, fcsdWinId)
     i3.command(
-      util.format('[con_id=%s] mark --add --toggle %s', fcsdWinId, mark),
+      sprintf('[con_id=%s] mark --add --toggle %s', fcsdWinId, mark),
       (err, resp) => {}
     )
   }
@@ -115,7 +122,7 @@ const handleWindowEvent = async function(event) {
         // Filter for eligble windows and loop through them.
         fnodes.filter(node => isEligible(node)).map(node => {
           let winHeight = node.rect.height + node.deco_rect.height - peekMargin
-          let markCom = util.format(
+          let markCom = sprintf(
             '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
             node.id, markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
           )
@@ -134,7 +141,7 @@ const handleWindowEvent = async function(event) {
       if (mark) {
         let toks = mark.split("_")
         i3.command(
-          util.format('unmark %s, move position %d px %d px', mark, toks[1], toks[2]-foccon.deco_rect.height),
+          sprintf('unmark %s, move position %d px %d px', mark, toks[1], toks[2]-foccon.deco_rect.height),
           (err, resp) => {
             if (err) {
               console.error(err)
