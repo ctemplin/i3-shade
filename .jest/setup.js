@@ -72,7 +72,8 @@ beforeAll(() => {
             // Here i3/lib/ipc.js calls self._handleMessage();
             switch(self._message.code) {
               case 0:
-                server.emit('workspace')
+                var wsNum = Number(self._message.payload.toString().split(' ').pop())
+                server.emit('workspace', wsNum)
               case 2:
                 self._stream.write(encodeCommand(0, '[{"success": true}]'))
             }
@@ -83,21 +84,53 @@ beforeAll(() => {
     })
 
     // code 0
-    server.on('workspace', done => {
-      var payload = '{ "change": "focus", "current": { "num": 2, "id": 28489712, "type": "workspace" }, "old": { "num": 1, "id": 28489715, "type": "workspace" }}'
-      conn.write(encodeCommand((0x080000000), payload))
+    server.on('workspace', (wsNum) => {
+      var payload = {
+        "change": "focus",
+        "current":
+        {
+          "num": wsNum,
+          "id": 28489712,
+          "type": "workspace"
+        },
+        "old":
+        {
+          "num": 1,
+          "id": 28489715,
+          "type": "workspace"
+        }
+      }
+      conn.write(encodeCommand((0x080000000), JSON.stringify(payload)))
     })
 
     // code 5
-    server.on('binding', done => {
-      var payload = '{ "change": "run", "binding": { "command": "nop i3-shade-exempt", "event_state_mask": [ "mod4", "ctrl"  ], "input_code": 0, "symbol": "space", "input_type": "keyboard" }}'
-      conn.write(encodeCommand((0x080000005), payload))
+    server.on('binding', () => {
+      var payload = {
+        "change": "run",
+        "binding":
+        {
+          "command": "nop i3-shade-exempt",
+          "event_state_mask": [ "mod4", "ctrl" ],
+          "input_code": 0,
+          "symbol": "space",
+          "input_type": "keyboard"
+        }
+      }
+      conn.write(encodeCommand((0x080000005), JSON.stringify(payload)))
     })
 
     // code 3
-    server.on('window', done => {
-      var payload = '{"change": "focus", "container": {"id": 35569536, "type": "con", "focused": true, }}'
-      conn.write(encodeCommand((0x080000003), payload))
+    server.on('window', () => {
+      var payload = {
+        "change": "focus",
+        "container":
+        {
+          "id": 35569536,
+          "type": "con",
+          "focused": true
+        }
+      }
+      conn.write(encodeCommand((0x080000003), JSON.stringify(payload)))
     })
   });
   server.listen(globals.__SOCKET_PATH__)

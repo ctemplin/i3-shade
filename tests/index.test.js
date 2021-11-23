@@ -12,6 +12,7 @@ describe('i3-ipc', () => {
   beforeAll(() => {
     Shade = require('../src/lib/shade')
     i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, 'nop i3-shade-exempt')
+    Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
     i3shade.connect()
   })
@@ -22,7 +23,8 @@ describe('i3-ipc', () => {
         if (err) { done(err); return; }
         expect(json[0].success).toBeTruthy()
         expect(hweSpy).toHaveBeenCalledTimes(1)
-        i3shade.i3.command("workspace 1", cb2)
+        expect(i3shade.getFcsdWinNum()).toEqual(2)
+        i3shade.i3.command("workspace number 1", cb2)
       } catch(error) {
         done(error)
       }
@@ -33,13 +35,14 @@ describe('i3-ipc', () => {
         if (err) { done(err); return; }
         expect(json[0].success).toBeTruthy()
         expect(hweSpy).toHaveBeenCalledTimes(2)
+        expect(i3shade.getFcsdWinNum()).toEqual(1)
         done()
       } catch(error) {
         done(error)
       }
     }
 
-    i3shade.i3.command("workspace 2", cb)
+    i3shade.i3.command("workspace number 2", cb)
   })
 
   test('', done => {
