@@ -55,9 +55,18 @@ beforeAll(() => {
               // Here i3/lib/ipc.js calls self._handleMessage();
               switch(self._message.code) {
                 case 1:
-                  self._stream.write(encodeCommand(1,
-                    '[{ "num": 1, "name": "1", "visible": true, "focused": true, "urgent": false, "rect": {  "x": 0,  "y": 0,  "width": 1280,  "height": 800 }, "output": "LVDS1"}]'
-                  ))
+                  let payload = [
+                    {
+                      "num": 1,
+                      "name": "1",
+                      "visible": true,
+                      "focused": true,
+                      "urgent": false,
+                      "rect": { "x": 0, "y": 0, "width": 1280, "height": 800 },
+                      "output": "LVDS1",
+                    },
+                  ];
+                  self._stream.write(encodeCommand(1, JSON.stringify(payload)))
                   break;
               }
             } else {
