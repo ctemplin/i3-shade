@@ -6,7 +6,7 @@ describe('IPC daemon', () => {
   })
 })
 
-describe('i3-ipc', () => {
+describe('i3-shade', () => {
   var i3shade, hweSpy
 
   beforeAll( done => {
@@ -15,9 +15,15 @@ describe('i3-ipc', () => {
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
     hbeSpy = jest.spyOn(i3shade, 'handleBindingEvent')
-    i3shade.connect((stream) => {
-      done()
-    })
+    // Spy on shade's set mark command
+    this.markCallback = function(err, json) {return json[0]}
+    hmeSpy = jest.spyOn(this, 'markCallback')
+    i3shade.connect(
+      shadeCallbacks = {
+        connect: function(stream) { done() },
+        mark: hmeSpy
+      }
+    )
   })
 
   test('gets the initial workspace number', () => {
@@ -57,6 +63,17 @@ describe('i3-ipc', () => {
       try {
         if (err) done(err)
         expect(hbeSpy).toHaveBeenCalledTimes(1)
+        expect(json[0].success).toBeTruthy()
+        setTimeout(cb2, 50) // time for shade's command callback to run
+      } catch (error) {
+        done(error)
+      }
+    }
+    cb2 = function() {
+      try {
+        expect(hmeSpy).toHaveBeenCalledTimes(1)
+        expect(hmeSpy.mock.results[0].type).toEqual('return')
+        expect(hmeSpy.mock.results[0].value.success).toEqual(true)
         done()
       } catch (error) {
         done(error)

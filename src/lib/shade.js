@@ -18,13 +18,14 @@ class Shade {
     this.handlersSet = false
   }
 
-  connect = function(callback) {
+  connect = function(callbacks) {
+    this.callbacks = callbacks ?? {}
     this.i3 = require('i3').createClient({path: this.socketPath}, (stream) => {})
 
     // Get the initial focused WS num
     this.i3.workspaces((err, json) => {
       this.fcsdWsNum = json.find(ws => ws.focused).num
-      callback?.call()
+      this.callbacks.connect?.call()
     })
 
     this.i3.on('workspace', this.handleWorkspaceEvent.bind(this))
@@ -44,7 +45,7 @@ class Shade {
       let mark = sprintf(this.exemptMarkPat, this.fcsdWinId)
       this.i3.command(
         sprintf('[con_id=%s] mark --add --toggle %s', this.fcsdWinId, mark),
-        (err, resp) => {}
+        this.callbacks.mark?.bind(this)
       )
     }
   }
