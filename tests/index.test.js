@@ -1,4 +1,3 @@
-const { Server } = require("http")
 const { globals } = require("../jest.config")
 
 describe('IPC daemon', () => {
@@ -8,12 +7,43 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-ipc', () => {
-  var i3
+  var i3shade, hweSpy
+
   beforeAll(() => {
-    i3 = require('i3').createClient({ path: globals.__SOCKET_PATH__ })
+    Shade = require('../src/lib/shade')
+    i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, 'nop i3-shade-exempt')
+    hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
+    i3shade.connect()
   })
-  it('connects to the IPC daemon', done => {
-    function cb(err, json) {
+
+  test('updates the workspace number twice', done => {
+    cb = function(err, json) { 
+      try {
+        if (err) { done(err); return; }
+        expect(json[0].success).toBeTruthy()
+        expect(hweSpy).toHaveBeenCalledTimes(1)
+        i3shade.i3.command("workspace 1", cb2)
+      } catch(error) {
+        done(error)
+      }
+    }
+
+    cb2 = function(err, json) {
+      try {
+        if (err) { done(err); return; }
+        expect(json[0].success).toBeTruthy()
+        expect(hweSpy).toHaveBeenCalledTimes(2)
+        done()
+      } catch(error) {
+        done(error)
+      }
+    }
+
+    i3shade.i3.command("workspace 2", cb)
+  })
+
+  test('', done => {
+    cb2 = function(err, json) { 
       try {
         if (err) { done(err); return; }
         expect(json[0].success).toBeTruthy()
@@ -22,41 +52,6 @@ describe('i3-ipc', () => {
         done(error)
       }
     }
-    
-    i3.command('workspace 1', cb)
+    i3shade.i3.command("workspace 1", cb2)
   })
-
-  describe('i3-shade', () => {
-    var shadeProc
-
-    beforeAll(() =>{
-      shadeProc = require('child_process').spawn(
-        'node',
-        ['--title', 'i3-shade-jest', '--', 'src/index.js', '--prefix=shade-jest', '--exempt=shade-jest-exempt', '--socketpath=' + globals.__SOCKET_PATH__],
-        { stdio: 'pipe' }
-      )
-    })
-
-    afterAll(() => {
-      shadeProc.kill()
-    })
-
-    it('does it', done => {
-      //console.log(shadeProc._handle.pid)
-      try {
-        shadeProc.stdout.on('data', (d) => {
-          console.log(d.toString())
-          expect(d.toString()).toEqual(5)
-          done()
-        })
-        globals.__SERVER__.emit('binding')
-        globals.__SERVER__.emit('binding')
-      } catch (err) {
-        console.error(err)
-        done(err)
-      }
-    })
-
-  })
-
 })
