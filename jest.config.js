@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: "jest-environment-node",
   globals: {
     "__SOCKET_PATH__": null,
-    "__SERVER__": null
+    "__EXEMPT_COM__": "nop i3-shade-exempt"
   },
   setupFilesAfterEnv: ['<rootDir>/.jest/setup.js'],
 }

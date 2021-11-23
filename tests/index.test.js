@@ -9,11 +9,12 @@ describe('IPC daemon', () => {
 describe('i3-ipc', () => {
   var i3shade, hweSpy
 
-  beforeAll(done => {
+  beforeAll( done => {
     Shade = require('../src/lib/shade')
-    i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, 'nop i3-shade-exempt')
+    i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, globals.__EXEMPT_COM__)
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
+    hbeSpy = jest.spyOn(i3shade, 'handleBindingEvent')
     i3shade.connect((stream) => {
       done()
     })
@@ -51,16 +52,16 @@ describe('i3-ipc', () => {
     i3shade.i3.command("workspace number 2", cb)
   })
 
-  test('', done => {
-    cb2 = function(err, json) { 
+  test('reponds to exempt binding', done => {
+    cb = function(err, json) {
       try {
-        if (err) { done(err); return; }
-        expect(json[0].success).toBeTruthy()
+        if (err) done(err)
+        expect(hbeSpy).toHaveBeenCalledTimes(1)
         done()
-      } catch(error) {
+      } catch (error) {
         done(error)
       }
     }
-    i3shade.i3.command("workspace 1", cb2)
+    i3shade.i3.command(globals.__EXEMPT_COM__, cb)
   })
 })

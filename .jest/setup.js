@@ -79,12 +79,22 @@ beforeAll(() => {
           if (data) {
             self._message.payload = data;
             // Here i3/lib/ipc.js calls self._handleMessage();
+            let payload = self._message.payload.toString()
             switch(self._message.code) {
-              case 0:
-                var wsNum = Number(self._message.payload.toString().split(' ').pop())
-                server.emit('workspace', wsNum)
-              case 2:
+              case 0: // COMMAND
+                if (payload == globals.__EXEMPT_COM__) {
+                  server.emit('binding')
+                }
+                let payloadSegs = payload.split(' ')
+                if (payloadSegs[0] == 'workspace') {
+                  var wsNum = Number(payloadSegs.pop())
+                  server.emit('workspace', wsNum)
+                }
                 self._stream.write(encodeCommand(0, '[{"success": true}]'))
+                break;
+              case 2: // SUBSCRIBE
+                self._stream.write(encodeCommand(2, '[{"success": true}]'))
+                break;
             }
             self._waitHeader = true;
           } else break;
