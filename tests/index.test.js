@@ -9,12 +9,18 @@ describe('IPC daemon', () => {
 describe('i3-ipc', () => {
   var i3shade, hweSpy
 
-  beforeAll(() => {
+  beforeAll(done => {
     Shade = require('../src/lib/shade')
     i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, 'nop i3-shade-exempt')
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
-    i3shade.connect()
+    i3shade.connect((stream) => {
+      done()
+    })
+  })
+
+  test('gets the initial workspace number', () => {
+    expect(i3shade.getFcsdWinNum()).toEqual(1)
   })
 
   test('updates the workspace number twice', done => {

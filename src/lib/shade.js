@@ -18,12 +18,13 @@ class Shade {
     this.handlersSet = false
   }
 
-  connect = function() {
-    this.i3 = require('i3').createClient({path: this.socketPath}, () => {})
+  connect = function(callback) {
+    this.i3 = require('i3').createClient({path: this.socketPath}, (stream) => {})
 
     // Get the initial focused WS num
     this.i3.workspaces((err, json) => {
       this.fcsdWsNum = json.find(ws => ws.focused).num
+      callback?.call()
     })
 
     this.i3.on('workspace', this.handleWorkspaceEvent.bind(this))
