@@ -7,21 +7,24 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-shade', () => {
-  var i3shade, hweSpy
+  var i3shade, workspaceSpy, bindingSpy, markSpy, windowSpy
 
   beforeAll( done => {
     Shade = require('../src/lib/shade')
     i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, globals.__EXEMPT_COM__)
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
-    hweSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
-    hbeSpy = jest.spyOn(i3shade, 'handleBindingEvent')
+    workspaceSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
+    bindingSpy = jest.spyOn(i3shade, 'handleBindingEvent')
     // Spy on shade's set mark command
     this.markCallback = function(err, json) {return json[0]}
-    hmeSpy = jest.spyOn(this, 'markCallback')
+    markSpy = jest.spyOn(this, 'markCallback')
+    this.windowCallback = function(err, json) {return json}
+    windowSpy = jest.spyOn(this, 'windowCallback')
     i3shade.connect(
       shadeCallbacks = {
         connect: function(stream) { done() },
-        mark: hmeSpy
+        mark: markSpy,
+        window: windowSpy
       }
     )
   })
@@ -35,7 +38,7 @@ describe('i3-shade', () => {
       try {
         if (err) { done(err); return; }
         expect(json[0].success).toBeTruthy()
-        expect(hweSpy).toHaveBeenCalledTimes(1)
+        expect(workspaceSpy).toHaveBeenCalledTimes(1)
         expect(i3shade.getFcsdWinNum()).toEqual(2)
         i3shade.i3.command("workspace number 1", cb2)
       } catch(error) {
@@ -47,7 +50,7 @@ describe('i3-shade', () => {
       try {
         if (err) { done(err); return; }
         expect(json[0].success).toBeTruthy()
-        expect(hweSpy).toHaveBeenCalledTimes(2)
+        expect(workspaceSpy).toHaveBeenCalledTimes(2)
         expect(i3shade.getFcsdWinNum()).toEqual(1)
         done()
       } catch(error) {
@@ -62,7 +65,7 @@ describe('i3-shade', () => {
     cb = function(err, json) {
       try {
         if (err) done(err)
-        expect(hbeSpy).toHaveBeenCalledTimes(1)
+        expect(bindingSpy).toHaveBeenCalledTimes(1)
         expect(json[0].success).toBeTruthy()
         setTimeout(cb2, 50) // time for shade's command callback to run
       } catch (error) {
@@ -71,9 +74,9 @@ describe('i3-shade', () => {
     }
     cb2 = function() {
       try {
-        expect(hmeSpy).toHaveBeenCalledTimes(1)
-        expect(hmeSpy.mock.results[0].type).toEqual('return')
-        expect(hmeSpy.mock.results[0].value.success).toEqual(true)
+        expect(markSpy).toHaveBeenCalledTimes(1)
+        expect(markSpy.mock.results[0].type).toEqual('return')
+        expect(markSpy.mock.results[0].value.success).toEqual(true)
         done()
       } catch (error) {
         done(error)

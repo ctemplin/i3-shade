@@ -89,6 +89,7 @@ class Shade {
               if (err) {
                 console.error(err)
               }
+              this.callbacks.mark?.bind(this)
             })
           })
         })
