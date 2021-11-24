@@ -64,17 +64,7 @@ beforeAll(() => {
               //#region Here i3/lib/ipc.js calls self._handleMessage();
               switch(self._message.code) {
                 case 1:
-                  let payload = [
-                    {
-                      "num": 1,
-                      "name": "1",
-                      "visible": true,
-                      "focused": true,
-                      "urgent": false,
-                      "rect": { "x": 0, "y": 0, "width": 1280, "height": 800 },
-                      "output": "LVDS1",
-                    },
-                  ];
+                  let payload = require('../tests/data-mocks/cm_workspaces_initial.json')
                   self._stream.write(encodeCommand(1, JSON.stringify(payload)))
                   break;
               }
@@ -116,51 +106,20 @@ beforeAll(() => {
 
     // code 0
     server.on('workspace', (wsNum) => {
-      var payload = {
-        "change": "focus",
-        "current":
-        {
-          "num": wsNum,
-          "id": 28489712,
-          "type": "workspace"
-        },
-        "old":
-        {
-          "num": 1,
-          "id": 28489715,
-          "type": "workspace"
-        }
-      }
+      var payload = require('../tests/data-mocks/ev_workspace_focus.json')
+      payload.current.num = wsNum
       conn.write(encodeCommand((0x080000000), JSON.stringify(payload)))
     })
 
     // code 5
     server.on('binding', () => {
-      var payload = {
-        "change": "run",
-        "binding":
-        {
-          "command": "nop i3-shade-exempt",
-          "event_state_mask": [ "mod4", "ctrl" ],
-          "input_code": 0,
-          "symbol": "space",
-          "input_type": "keyboard"
-        }
-      }
+      var payload = require('../tests/data-mocks/ev_binding_shade-exempt.json')
       conn.write(encodeCommand((0x080000005), JSON.stringify(payload)))
     })
 
     // code 3
     server.on('window', () => {
-      var payload = {
-        "change": "focus",
-        "container":
-        {
-          "id": 35569536,
-          "type": "con",
-          "focused": true
-        }
-      }
+      var payload = require('../tests/data-mocks/ev_window_focus.json')
       conn.write(encodeCommand((0x080000003), JSON.stringify(payload)))
     })
   });

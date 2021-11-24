@@ -1,0 +1,11 @@
+[
+  {
+    "num": 1,
+    "name": "1",
+    "visible": true,
+    "focused": true,
+    "urgent": false,
+    "rect": { "x": 0, "y": 0, "width": 1280, "height": 800 },
+    "output": "LVDS1"
+  }
+]

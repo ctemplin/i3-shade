@@ -1,0 +1,15 @@
+{
+  "change": "focus",
+  "current":
+  {
+    "num": -1,
+    "id": 28489712,
+    "type": "workspace"
+  },
+  "old":
+  {
+    "num": 1,
+    "id": 28489715,
+    "type": "workspace"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "change": "run",
+  "binding":
+  {
+    "command": "nop i3-shade-exempt",
+    "event_state_mask": [ "mod4", "ctrl" ],
+    "input_code": 0,
+    "symbol": "space",
+    "input_type": "keyboard"
+  }
+}
