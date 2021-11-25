@@ -32,13 +32,13 @@ function I3Message(buff) {
 //#endregion
 
 //#region Adapted from https://github.com/sidorares/node-i3/blob/2cee4237e1ade8f911ee2cd4ab4e1a0a382bd958/lib/ipc.js#L124
-var commandNameFromCode = "COMMAND GET_WORKSPACES SUBSCRIBE GET_OUTPUTS GET_TREE GET_MARKS GET_BAR_CONFIG GET_VERSION GET_BINDING_MODES GET_CONFIG SEND_TICK SYNC".split(' ');
-var commandCodeFromName = {};
+const commandNameFromCode = "COMMAND GET_WORKSPACES SUBSCRIBE GET_OUTPUTS GET_TREE GET_MARKS GET_BAR_CONFIG GET_VERSION GET_BINDING_MODES GET_CONFIG SEND_TICK SYNC".split(' ');
+const commandCodeFromName = {};
 commandNameFromCode.forEach(function(name, code) { commandCodeFromName[name] = code; });
 
-var eventNameFromCode = "workspace output mode window barconfig_update binding shutdown tick".split(' ');
-var eventCodeFromName = {};
-eventNameFromCode.forEach(function(name, code) { eventCodeFromName[name] = code; });
+const eventNameFromCode = "workspace output mode window barconfig_update binding shutdown tick".split(' ');
+const eventCodeFromName = {};
+eventNameFromCode.forEach(function(name, code) { eventCodeFromName[name] =  0x80000000 + code; });
 //#endregion
 
 function I3MockServer() {
@@ -55,15 +55,16 @@ function I3MockServer() {
             self._message = new I3Message(header);
             if (self._message.payloadLength == 0) {
               //#region Here i3/lib/ipc.js calls self._handleMessage();
+              let comCode = self._message.code
               let payload
-              switch(self._message.code) {
-                case 1: // GET_WORKSPACES
+              switch(commandNameFromCode[comCode]) {
+                case 'GET_WORKSPACES':
                   payload = require('../data-mocks/cm_workspaces_initial.json')
-                  self._stream.write(encodeCommand(1, JSON.stringify(payload)))
+                  self._stream.write(encodeCommand(comCode, JSON.stringify(payload)))
                   break;
-                case 4: // GET_TREE
+                case 'GET_TREE':
                   payload = require('../data-mocks/cm_tree.json')
-                  self._stream.write(encodeCommand(4, JSON.stringify(payload)))
+                  self._stream.write(encodeCommand(comCode, JSON.stringify(payload)))
                   break;
               }
               //#endregion
@@ -77,9 +78,10 @@ function I3MockServer() {
           if (data) {
             self._message.payload = data;
             //#region Here i3/lib/ipc.js calls self._handleMessage();
+            let comCode = self._message.code
             let payload = self._message.payload.toString()
-            switch(self._message.code) {
-              case 0: // COMMAND
+            switch(commandNameFromCode[comCode]) {
+              case 'COMMAND':
                 if (payload == globals.__EXEMPT_COM__) {
                   self.server.emit('binding')
                 }
@@ -94,10 +96,20 @@ function I3MockServer() {
                 if (payloadSegs[1] == "mark") {
 
                 }
-                self._stream.write(encodeCommand(0, '[{"success": true}]'))
+                self._stream.write(
+                  encodeCommand(
+                    commandCodeFromName['COMMAND'],
+                    '[{"success": true}]'
+                  )
+                )
                 break;
-              case 2: // SUBSCRIBE
-                self._stream.write(encodeCommand(2, '[{"success": true}]'))
+              case 'SUBSCRIBE':
+                self._stream.write(
+                  encodeCommand(
+                    commandCodeFromName['SUBSCRIBE'],
+                    '[{"success": true}]'
+                  )
+                )
                 break;
             }
             //#endregion
@@ -113,19 +125,19 @@ function I3MockServer() {
   this.server.on('workspace', (wsNum) => {
     var payload = require('../data-mocks/ev_workspace_focus.json')
     payload.current.num = wsNum
-    this._stream.write(encodeCommand((0x080000000), JSON.stringify(payload)))
+    this._stream.write(encodeCommand(eventCodeFromName['workspace'], JSON.stringify(payload)))
   })
 
   // code 5
   this.server.on('binding', () => {
     var payload = require('../data-mocks/ev_binding_shade-exempt.json')
-    this._stream.write(encodeCommand((0x080000005), JSON.stringify(payload)))
+    this._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(payload)))
   })
 
   // code 3
   this.server.on('window', () => {
     var payload = require('../data-mocks/ev_window_focus.json')
-    this._stream.write(encodeCommand((0x080000003), JSON.stringify(payload)))
+    this._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(payload)))
   })
 
   this.close = function() {
