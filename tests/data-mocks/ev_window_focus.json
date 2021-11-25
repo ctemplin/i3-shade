@@ -4,6 +4,8 @@
   {
     "id": 35569536,
     "type": "con",
-    "focused": true
+    "focused": true,
+    "marks": [],
+    "floating": "user_off"
   }
 }

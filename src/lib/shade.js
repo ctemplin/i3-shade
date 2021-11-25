@@ -45,7 +45,7 @@ class Shade {
       let mark = sprintf(this.exemptMarkPat, this.fcsdWinId)
       this.i3.command(
         sprintf('[con_id=%s] mark --add --toggle %s', this.fcsdWinId, mark),
-        this.callbacks.mark?.bind(this)
+        this.callbacks.markExempt?.bind(this)
       )
     }
   }
@@ -85,12 +85,7 @@ class Shade {
               '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
               node.id, this.markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
             )
-            this.i3.command(markCom, (err, resp) => {
-              if (err) {
-                console.error(err)
-              }
-              this.callbacks.mark?.bind(this)
-            })
+            this.i3.command(markCom, this.callbacks.markShaded?.bind(this))
           })
         })
       }

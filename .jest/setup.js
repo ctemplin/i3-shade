@@ -62,10 +62,15 @@ beforeAll(() => {
             self._message = new I3Message(header);
             if (self._message.payloadLength == 0) {
               //#region Here i3/lib/ipc.js calls self._handleMessage();
+              let payload
               switch(self._message.code) {
-                case 1:
-                  let payload = require('../tests/data-mocks/cm_workspaces_initial.json')
+                case 1: // GET_WORKSPACES
+                  payload = require('../tests/data-mocks/cm_workspaces_initial.json')
                   self._stream.write(encodeCommand(1, JSON.stringify(payload)))
+                  break;
+                case 4: // GET_TREE
+                  payload = require('../tests/data-mocks/cm_tree.json')
+                  self._stream.write(encodeCommand(4, JSON.stringify(payload)))
                   break;
               }
               //#endregion
@@ -89,6 +94,12 @@ beforeAll(() => {
                 if (payloadSegs[0] == 'workspace') {
                   var wsNum = Number(payloadSegs.pop())
                   server.emit('workspace', wsNum)
+                }
+                if (payload == "focus mode_toggle") {
+                  server.emit('window', payload)
+                }
+                if (payloadSegs[1] == "mark") {
+
                 }
                 self._stream.write(encodeCommand(0, '[{"success": true}]'))
                 break;

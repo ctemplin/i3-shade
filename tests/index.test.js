@@ -7,7 +7,7 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-shade', () => {
-  var i3shade, workspaceSpy, bindingSpy, markSpy, windowSpy
+  var i3shade, workspaceSpy, bindingSpy, markExemptSpy, markShadedSpy //windowSpy
 
   beforeAll( done => {
     Shade = require('../src/lib/shade')
@@ -15,16 +15,22 @@ describe('i3-shade', () => {
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     workspaceSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
     bindingSpy = jest.spyOn(i3shade, 'handleBindingEvent')
-    // Spy on shade's set mark command
-    this.markCallback = function(err, json) {return json[0]}
-    markSpy = jest.spyOn(this, 'markCallback')
-    this.windowCallback = function(err, json) {return json}
-    windowSpy = jest.spyOn(this, 'windowCallback')
+
+    // Spy on shade's set mark commands
+    this.markExemptCallback = function(err, json) {return json[0]}
+    markExemptSpy = jest.spyOn(this, 'markExemptCallback')
+    this.markShadedCallback = function(err, json) {return json[0]}
+    markShadedSpy = jest.spyOn(this, 'markShadedCallback')
+
+    // this.windowCallback = function(err, json) {return json}
+    // windowSpy = jest.spyOn(this, 'windowCallback')
+
     i3shade.connect(
       shadeCallbacks = {
         connect: function(stream) { done() },
-        mark: markSpy,
-        window: windowSpy
+        markExempt: markExemptSpy,
+        markShaded: markShadedSpy
+        // window: windowSpy
       }
     )
   })
@@ -74,9 +80,9 @@ describe('i3-shade', () => {
     }
     cb2 = function() {
       try {
-        expect(markSpy).toHaveBeenCalledTimes(1)
-        expect(markSpy.mock.results[0].type).toEqual('return')
-        expect(markSpy.mock.results[0].value.success).toEqual(true)
+        expect(markExemptSpy).toHaveBeenCalledTimes(1)
+        expect(markExemptSpy.mock.results[0].type).toEqual('return')
+        expect(markExemptSpy.mock.results[0].value.success).toEqual(true)
         done()
       } catch (error) {
         done(error)
@@ -84,4 +90,28 @@ describe('i3-shade', () => {
     }
     i3shade.i3.command(globals.__EXEMPT_COM__, cb)
   })
+
+  test('responds to window focus', done => {
+    cb = function(err, json) {
+      try {
+        if (err) done(err)
+        expect(json[0].success).toEqual(true)
+        setTimeout(cb2, 50) // time for shade's command callback to run
+      } catch (error) {
+        done(error)
+      }
+    }
+    cb2 = function() {
+      try {
+        expect(markShadedSpy).toHaveBeenCalledTimes(1)
+        expect(markShadedSpy.mock.results[0].type).toEqual('return')
+        expect(markShadedSpy.mock.results[0].value.success).toEqual(true)
+        done()
+      } catch (error) {
+        done(error)
+      }
+    }
+    i3shade.i3.command('focus mode_toggle', cb)
+  })
+
 })
