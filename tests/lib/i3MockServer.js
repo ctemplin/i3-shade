@@ -1,5 +1,3 @@
-const { globals } = require('../../jest.config');
-
 //#region Adapted from https://github.com/sidorares/node-i3/blob/2cee4237e1ade8f911ee2cd4ab4e1a0a382bd958/lib/ipc.js#L7
 const I3_MAGIC = new Buffer.from('i3-ipc');
 var I3_MESSAGE_HEADER_LENGTH = I3_MAGIC.length + 8;
@@ -41,37 +39,36 @@ const eventCodeFromName = {};
 eventNameFromCode.forEach(function(name, code) { eventCodeFromName[name] =  0x80000000 + code; });
 //#endregion
 
-function I3MockServer(handleMessage) {
-  var self = this
+function I3MockServer(socketPath, handleMessage) {
   this.i3ipc = require('net').createServer({}, (conn) => {
-    self._stream = conn
-    self._waitHeader = true
+    this._stream = conn
+    this._waitHeader = true
     //#region Adapted from https://github.com/sidorares/node-i3/blob/2cee4237e1ade8f911ee2cd4ab4e1a0a382bd958/lib/ipc.js#L74
-    self._stream.on('readable', () => {
+    this._stream.on('readable', () => {
       while(1) {
-        if (self._waitHeader) {
-          var header = self._stream.read(I3_MESSAGE_HEADER_LENGTH);
+        if (this._waitHeader) {
+          var header = this._stream.read(I3_MESSAGE_HEADER_LENGTH);
           if (header) {
-            self._message = new I3Message(header);
-            if (self._message.payloadLength == 0) {
-              handleMessage(self._message)
+            this._message = new I3Message(header);
+            if (this._message.payloadLength == 0) {
+              handleMessage(this._message)
             } else {
-              self._waitHeader = false;
+              this._waitHeader = false;
             }
           } else break;
         }
         else {
-          var data = self._stream.read(self._message.payloadLength);
+          var data = this._stream.read(this._message.payloadLength);
           if (data) {
-            self._message.payload = data;
-            handleMessage(self._message)
-            self._waitHeader = true;
+            this._message.payload = data;
+            handleMessage(this._message)
+            this._waitHeader = true;
           } else break;
         }
       }
     })
     //#endregion
-  }).listen(globals.__SOCKET_PATH__);
+  }).listen(socketPath)
 
   this.close = function() {
     this.i3ipc.close()
