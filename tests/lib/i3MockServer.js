@@ -41,9 +41,9 @@ const eventCodeFromName = {};
 eventNameFromCode.forEach(function(name, code) { eventCodeFromName[name] =  0x80000000 + code; });
 //#endregion
 
-function I3MockServer() {
+function I3MockServer(handleMessage) {
   var self = this
-  this.server = require('net').createServer({}, (conn) => {
+  this.i3ipc = require('net').createServer({}, (conn) => {
     self._stream = conn
     self._waitHeader = true
     //#region Adapted from https://github.com/sidorares/node-i3/blob/2cee4237e1ade8f911ee2cd4ab4e1a0a382bd958/lib/ipc.js#L74
@@ -54,20 +54,7 @@ function I3MockServer() {
           if (header) {
             self._message = new I3Message(header);
             if (self._message.payloadLength == 0) {
-              //#region Here i3/lib/ipc.js calls self._handleMessage();
-              let comCode = self._message.code
-              let payload
-              switch(commandNameFromCode[comCode]) {
-                case 'GET_WORKSPACES':
-                  payload = require('../data-mocks/cm_workspaces_initial.json')
-                  self._stream.write(encodeCommand(comCode, JSON.stringify(payload)))
-                  break;
-                case 'GET_TREE':
-                  payload = require('../data-mocks/cm_tree.json')
-                  self._stream.write(encodeCommand(comCode, JSON.stringify(payload)))
-                  break;
-              }
-              //#endregion
+              handleMessage(self._message)
             } else {
               self._waitHeader = false;
             }
@@ -77,42 +64,7 @@ function I3MockServer() {
           var data = self._stream.read(self._message.payloadLength);
           if (data) {
             self._message.payload = data;
-            //#region Here i3/lib/ipc.js calls self._handleMessage();
-            let comCode = self._message.code
-            let payload = self._message.payload.toString()
-            switch(commandNameFromCode[comCode]) {
-              case 'COMMAND':
-                if (payload == globals.__EXEMPT_COM__) {
-                  self.server.emit('binding')
-                }
-                let payloadSegs = payload.split(' ')
-                if (payloadSegs[0] == 'workspace') {
-                  var wsNum = Number(payloadSegs.pop())
-                  self.server.emit('workspace', wsNum)
-                }
-                if (payload == "focus mode_toggle") {
-                  self.server.emit('window', payload)
-                }
-                if (payloadSegs[1] == "mark") {
-
-                }
-                self._stream.write(
-                  encodeCommand(
-                    commandCodeFromName['COMMAND'],
-                    '[{"success": true}]'
-                  )
-                )
-                break;
-              case 'SUBSCRIBE':
-                self._stream.write(
-                  encodeCommand(
-                    commandCodeFromName['SUBSCRIBE'],
-                    '[{"success": true}]'
-                  )
-                )
-                break;
-            }
-            //#endregion
+            handleMessage(self._message)
             self._waitHeader = true;
           } else break;
         }
@@ -121,28 +73,9 @@ function I3MockServer() {
     //#endregion
   }).listen(globals.__SOCKET_PATH__);
 
-  // code 0
-  this.server.on('workspace', (wsNum) => {
-    var payload = require('../data-mocks/ev_workspace_focus.json')
-    payload.current.num = wsNum
-    this._stream.write(encodeCommand(eventCodeFromName['workspace'], JSON.stringify(payload)))
-  })
-
-  // code 5
-  this.server.on('binding', () => {
-    var payload = require('../data-mocks/ev_binding_shade-exempt.json')
-    this._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(payload)))
-  })
-
-  // code 3
-  this.server.on('window', () => {
-    var payload = require('../data-mocks/ev_window_focus.json')
-    this._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(payload)))
-  })
-
   this.close = function() {
-    this.server.close()
+    this.i3ipc.close()
   }
 }
 
-module.exports = { I3MockServer, encodeCommand }
+module.exports = { I3MockServer, encodeCommand, commandNameFromCode, commandCodeFromName, eventCodeFromName }
