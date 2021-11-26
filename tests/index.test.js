@@ -8,7 +8,7 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-shade', () => {
-  var i3shade, workspaceSpy, bindingSpy, markExemptSpy, markShadedSpy, unmarkShaded //windowSpy
+  var i3shade, workspaceSpy, bindingSpy, markExemptSpy, markShadedSpy, unmarkShadedSpy
 
   beforeAll( done => {
     Shade = require('../src/lib/shade')
@@ -30,16 +30,12 @@ describe('i3-shade', () => {
     this.unmarkShadedCallback = function(err, json) {return json[0]}
     unmarkShadedSpy = jest.spyOn(this, 'unmarkShadedCallback')
 
-    // this.windowCallback = function(err, json) {return json}
-    // windowSpy = jest.spyOn(this, 'windowCallback')
-
     i3shade.connect(
       shadeCallbacks = {
         connect: function(stream) { done() },
         markExempt: markExemptSpy,
         markShaded: markShadedSpy,
         unmarkShaded: unmarkShadedSpy
-        // window: windowSpy
       }
     )
   })
