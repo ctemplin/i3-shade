@@ -2,7 +2,7 @@
   "change": "run",
   "binding":
   {
-    "command": "nop i3-shade-exempt",
+    "command": "",
     "event_state_mask": [ "mod4", "ctrl" ],
     "input_code": 0,
     "symbol": "space",

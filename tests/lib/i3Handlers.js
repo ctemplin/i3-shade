@@ -17,6 +17,7 @@ function handleMessage(server) {
     case 'COMMAND':
       if (payload == globals.__EXEMPT_COM__) {
         resp = require('../data-mocks/ev_binding_shade-exempt.json')
+        resp.binding.command = globals.__EXEMPT_COM__
         server._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(resp)))
       }
       let payloadSegs = payload.split(' ')
@@ -33,7 +34,7 @@ function handleMessage(server) {
       if (payload == "focus floating") {
         resp = require('../data-mocks/ev_window_focus.json')
         resp.container.floating = "user_on"
-        resp.container.marks = ["shade-jest_1_1_999"]
+        resp.container.marks = [globals.__SHADE_PREF__ + "_1_1_999"]
         server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
       }
       if (payloadSegs[1] == "mark") {

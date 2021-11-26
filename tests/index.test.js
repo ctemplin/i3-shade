@@ -2,7 +2,8 @@ const { globals } = require("../jest.config")
 
 describe('IPC daemon', () => {
   it('gets the global socket', () => {
-    expect(globals.__SOCKET_PATH).not.toBeNull()
+    expect(globals.__SOCKET_PATH__).not.toBeUndefined()
+    expect(globals.__SOCKET_PATH__).not.toBeNull()
   })
 })
 
@@ -11,7 +12,12 @@ describe('i3-shade', () => {
 
   beforeAll( done => {
     Shade = require('../src/lib/shade')
-    i3shade = new Shade(globals.__SHADE_PREF__, globals.__SHADE_EXEMPT__, globals.__SOCKET_PATH__, globals.__EXEMPT_COM__)
+    i3shade = new Shade(
+      globals.__SHADE_PREF__,
+      globals.__SHADE_EXEMPT__,
+      globals.__SOCKET_PATH__,
+      globals.__EXEMPT_COM__
+    )
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     workspaceSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
     bindingSpy = jest.spyOn(i3shade, 'handleBindingEvent')
