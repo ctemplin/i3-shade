@@ -11,7 +11,7 @@ describe('i3-shade', () => {
 
   beforeAll( done => {
     Shade = require('../src/lib/shade')
-    i3shade = new Shade('shade-jest', 'shade-jest-exempt', globals.__SOCKET_PATH__, globals.__EXEMPT_COM__)
+    i3shade = new Shade(globals.__SHADE_PREF__, globals.__SHADE_EXEMPT__, globals.__SOCKET_PATH__, globals.__EXEMPT_COM__)
     Shade.prototype.getFcsdWinNum = function(){ return this.fcsdWsNum }
     workspaceSpy = jest.spyOn(i3shade, 'handleWorkspaceEvent')
     bindingSpy = jest.spyOn(i3shade, 'handleBindingEvent')
