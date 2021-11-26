@@ -1,6 +1,7 @@
 module.exports = {
   testPathIgnorePatterns: ['/node_modules/'],
   testEnvironment: "jest-environment-node",
+  clearMocks: true,
   globals: {
     "__SOCKET_PATH__": null,
     "__SHADE_PREF__": "shade-jest",

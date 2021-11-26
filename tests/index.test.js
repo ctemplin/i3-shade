@@ -72,7 +72,7 @@ describe('i3-shade', () => {
         done(error)
       }
     }
-
+    expect(workspaceSpy).toHaveBeenCalledTimes(0)
     i3shade.i3.command("workspace number 2", cb)
   })
 
@@ -97,6 +97,7 @@ describe('i3-shade', () => {
         done(error)
       }
     }
+    expect(markExemptSpy).toHaveBeenCalledTimes(0)
     i3shade.i3.command(globals.__EXEMPT_COM__, cb)
   })
 
@@ -120,6 +121,7 @@ describe('i3-shade', () => {
         done(error)
       }
     }
+    expect(markShadedSpy).toHaveBeenCalledTimes(0)
     i3shade.i3.command('focus tiling', cb)
   })
 
@@ -143,6 +145,7 @@ describe('i3-shade', () => {
         done(error)
       }
     }
+    expect(unmarkShadedSpy).toHaveBeenCalledTimes(0)
     i3shade.i3.command('focus floating', cb)
   })
 
