@@ -6,6 +6,12 @@
     "type": "con",
     "focused": true,
     "marks": [],
-    "floating": "user_off"
+    "floating": "user_off",
+    "deco_rect": {
+      "x": 0,
+      "y": 0,
+      "width": 800,
+      "height": 24
+    }
   }
 }

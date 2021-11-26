@@ -26,8 +26,14 @@ function handleMessage(server) {
         resp.current.num = wsNum
         server._stream.write(encodeCommand(eventCodeFromName['workspace'], JSON.stringify(resp)))
       }
-      if (payload == "focus mode_toggle") {
+      if (payload == "focus tiling") {
         resp = require('../data-mocks/ev_window_focus.json')
+        server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
+      }
+      if (payload == "focus floating") {
+        resp = require('../data-mocks/ev_window_focus.json')
+        resp.container.floating = "user_on"
+        resp.container.marks = ["shade-jest_1_1_999"]
         server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
       }
       if (payloadSegs[1] == "mark") {

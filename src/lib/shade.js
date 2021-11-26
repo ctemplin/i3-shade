@@ -85,7 +85,15 @@ class Shade {
               '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
               node.id, this.markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
             )
-            this.i3.command(markCom, this.callbacks.markShaded?.bind(this))
+            this.i3.command(
+              markCom,
+              (err, resp) => {
+                if (err) {
+                  console.error(err)
+                }
+                this.callbacks.markShaded?.call(this, err, resp)
+              }
+            )
           })
         })
       }
@@ -101,6 +109,7 @@ class Shade {
               if (err) {
                 console.error(err)
               }
+              this.callbacks.unmarkShaded?.call(this, err, resp)
             }
           )
         }
