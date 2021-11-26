@@ -51,7 +51,7 @@ function I3MockServer(socketPath, handleMessage) {
           if (header) {
             this._message = new I3Message(header);
             if (this._message.payloadLength == 0) {
-              handleMessage(this._message)
+              handleMessage(this) 
             } else {
               this._waitHeader = false;
             }
@@ -61,7 +61,7 @@ function I3MockServer(socketPath, handleMessage) {
           var data = this._stream.read(this._message.payloadLength);
           if (data) {
             this._message.payload = data;
-            handleMessage(this._message)
+            handleMessage(this)
             this._waitHeader = true;
           } else break;
         }
