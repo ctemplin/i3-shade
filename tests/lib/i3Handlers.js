@@ -29,6 +29,8 @@ function handleMessage(server) {
       }
       if (payload == "focus tiling") {
         resp = require('../data-mocks/ev_window_focus.json')
+        resp.container.floating = "user_off"
+        resp.container.marks = []
         server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
       }
       if (payload == "focus floating") {
