@@ -1,11 +1,12 @@
 #!/usr/bin/env -S node --title=i3-shade
 
-const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>] [--command=<string>]"
+const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>] [--command=<string>] [--fallback=<string>]"
 
 const argDefaults = {
   prefix: "shade",
   exempt: "shade_exempt",
-  command: "nop i3-shade-exempt"
+  command: "nop i3-shade-exempt",
+  fallback: null
 }
 
 // Parse args, if any
@@ -32,6 +33,9 @@ if (args.h || args.help) {
     --command=<string>\n\
                   Defaults to \"nop i3-shade-exempt\". The i3 command to toggle\n\
                   the shading exemption for the focused window. \n\
+    --fallback=<string>\n\
+                  Defaults to null. An i3 command to run if the 'focus mode_toggle'\n\
+                  command cannot find an elible window to focus.\n\
 ");
   process.exit(0);
 }
@@ -47,6 +51,7 @@ const exemptComStr = args.command ?? argDefaults.command
 const markPref = (args.prefix ?? argDefaults.prefix) + "_"
 const exemptMarkPref = "_" + (args.exempt ?? argDefaults.exempt) + "_"
 const socketPath = args.socketpath ?? ""
+const fallback = args.fallback ?? ""
 
 // Extraneous options
 const argKeys = Object.keys(args).slice(1)
@@ -61,4 +66,4 @@ if (argKeys.some(isNotInDefaults)) {
 }
 
 Shade = require('./lib/shade')
-i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr).connect()
+i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback).connect()

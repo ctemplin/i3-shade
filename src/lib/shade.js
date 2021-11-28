@@ -2,7 +2,7 @@ const sprintf = require('sprintf-js').sprintf
 
 class Shade {
 
-  constructor(markPref, exemptMarkPref, socketPath, exemptComStr) {
+  constructor(markPref, exemptMarkPref, socketPath, exemptComStr, fallbackCom) {
     this.markPref = markPref
     this.exemptMarkPref = exemptMarkPref
     this.socketPath = socketPath
@@ -16,6 +16,11 @@ class Shade {
 
     this.i3 = null
     this.handlersSet = false
+
+    this.fallbackCom = null
+    
+    this.fallbackCom = fallbackCom
+    this.modeToggleTimeout
   }
 
   connect = function(callbacks) {
@@ -48,12 +53,25 @@ class Shade {
         this.callbacks.markExempt?.bind(this)
       )
     }
+    if (event.binding.command == 'focus mode_toggle') {
+      if (
+        this.fallbackCom &&
+        (this.modeToggleTimeout == undefined || this.modeToggleTimeout?._destroyed)
+      ) {
+        clearTimeout(this.modeToggleTimeout)
+        this.i3.command(this.fallbackCom)
+      }
+    }
   }
 
   handleWindowEvent = async function(event) {
     this.fcsdWinId = event.container.id
     this.fcsdWinMarks = event.container.marks
     if (event.change == 'focus') {
+      this.modeToggleTimeout = setTimeout(
+        () => {clearTimeout(this.modeToggleTimeout)},
+        200
+      )
       let float_val = event.container.floating
       // Tiled window focused
       if (['user_off', 'auto_off'].includes(float_val) ) {
