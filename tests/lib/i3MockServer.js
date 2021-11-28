@@ -40,6 +40,7 @@ eventNameFromCode.forEach(function(name, code) { eventCodeFromName[name] =  0x80
 //#endregion
 
 function I3MockServer(socketPath, handleMessage) {
+  this.responses = {}
   this.i3ipc = require('net').createServer({}, (conn) => {
     this._stream = conn
     this._waitHeader = true

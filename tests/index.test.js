@@ -8,9 +8,13 @@ describe('IPC daemon', () => {
 })
 
 describe('i3-shade', () => {
-  var i3shade, workspaceSpy, bindingSpy, markExemptSpy, markShadedSpy, unmarkShadedSpy
+  var i3server, i3shade, workspaceSpy, bindingSpy, markExemptSpy, markShadedSpy, unmarkShadedSpy
 
   beforeAll( done => {
+    i3server = globals.__I3_MOCK_SERVER__
+    i3server.responses.workspaces = require('./data-mocks/cm_workspaces_initial.json')
+    i3server.responses.tree = require('./data-mocks/cm_tree.json')
+
     Shade = require('../src/lib/shade')
     i3shade = new Shade(
       globals.__SHADE_PREF__,
@@ -51,6 +55,8 @@ describe('i3-shade', () => {
         expect(json[0].success).toBeTruthy()
         expect(workspaceSpy).toHaveBeenCalledTimes(1)
         expect(i3shade.getFcsdWinNum()).toEqual(2)
+        resp.current.num = 1
+        i3server.responses.workspace = resp
         i3shade.i3.command("workspace number 1", cb2)
       } catch(error) {
         done(error)
@@ -69,6 +75,9 @@ describe('i3-shade', () => {
       }
     }
     expect(workspaceSpy).toHaveBeenCalledTimes(0)
+    let resp = require('./data-mocks/ev_workspace_focus.json')
+    resp.current.num = 2
+    i3server.responses.workspace = resp
     i3shade.i3.command("workspace number 2", cb)
   })
 
@@ -94,6 +103,9 @@ describe('i3-shade', () => {
       }
     }
     expect(markExemptSpy).toHaveBeenCalledTimes(0)
+    let resp = require('./data-mocks/ev_binding_shade-exempt.json')
+    resp.binding.command = globals.__EXEMPT_COM__
+    i3server.responses.exempt = resp
     i3shade.i3.command(globals.__EXEMPT_COM__, cb)
   })
 
@@ -118,6 +130,10 @@ describe('i3-shade', () => {
       }
     }
     expect(markShadedSpy).toHaveBeenCalledTimes(0)
+    let resp = require('./data-mocks/ev_window_focus.json')
+    resp.container.floating = "user_off"
+    resp.container.marks = []
+    i3server.responses.focus = resp
     i3shade.i3.command('focus tiling', cb)
   })
 
@@ -142,6 +158,10 @@ describe('i3-shade', () => {
       }
     }
     expect(unmarkShadedSpy).toHaveBeenCalledTimes(0)
+    let resp = require('./data-mocks/ev_window_focus.json')
+    resp.container.floating = "user_on"
+    resp.container.marks = [globals.__SHADE_PREF__ + "_1_1_999"]
+    i3server.responses.focus = resp
     i3shade.i3.command('focus floating', cb)
   })
 

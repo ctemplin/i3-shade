@@ -10,6 +10,7 @@ beforeAll(() => {
   var spath = path.join(process.cwd(), 'tests', 'i3-shade.sock')
   globals.__SOCKET_PATH__ = spath
   server = new I3MockServer(spath, handleMessage)
+  globals.__I3_MOCK_SERVER__ = server
 })
 
 afterAll(() => {
