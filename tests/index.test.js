@@ -1,4 +1,5 @@
 const { globals } = require("../jest.config")
+const { encodeCommand, eventCodeFromName } = require("./lib/i3MockServer")
 
 describe('IPC daemon', () => {
   it('gets the global socket', () => {
@@ -31,7 +32,7 @@ describe('i3-shade', () => {
     markExemptSpy = jest.spyOn(this, 'markExemptCallback')
     this.markShadedCallback = function(err, json) {return json[0]}
     markShadedSpy = jest.spyOn(this, 'markShadedCallback')
-    this.unmarkShadedCallback = function(err, json) {return json[0]}
+    this.unmarkShadedCallback = function(err, json) {return json}
     unmarkShadedSpy = jest.spyOn(this, 'unmarkShadedCallback')
 
     i3shade.connect(
@@ -42,6 +43,14 @@ describe('i3-shade', () => {
         unmarkShaded: unmarkShadedSpy
       }
     )
+  })
+
+  beforeEach(() => {
+    // Reset properties to baseline state
+    i3shade.modeToggleTimeout = null
+    i3server.responses = {}
+    i3server.responses.workspaces = require('./data-mocks/cm_workspaces_initial.json')
+    i3server.responses.tree = require('./data-mocks/cm_tree.json')
   })
 
   test('gets the initial workspace number', () => {
@@ -150,8 +159,8 @@ describe('i3-shade', () => {
     cb2 = function() {
       try {
         expect(unmarkShadedSpy).toHaveBeenCalledTimes(1)
-        expect(unmarkShadedSpy.mock.results[0].type).toEqual('return')
-        expect(unmarkShadedSpy.mock.results[0].value.success).toEqual(true)
+        expect(unmarkShadedSpy.mock.results[0].value.change).toEqual('mark')
+        expect(unmarkShadedSpy.mock.results[0].value.container.marks.length).toEqual(0)
         done()
       } catch (error) {
         done(error)
@@ -162,7 +171,25 @@ describe('i3-shade', () => {
     resp.container.floating = "user_on"
     resp.container.marks = [globals.__SHADE_PREF__ + "_1_1_999"]
     i3server.responses.focus = resp
+    i3server.responses.unmark = require('./data-mocks/ev_window_mark-remove.json')
     i3shade.i3.command('focus floating', cb)
   })
 
+  describe('when fallback is defined', () => {
+    it('calls the fallback', done => {
+      this.fallbackCallback = function(err, json) {
+        expect(json[0].success).toBeTruthy()
+        done()
+      }
+
+      // Ensure shade has a fallback command
+      i3shade.fallbackCom = 'nop fake'
+      fallbackSpy = jest.spyOn(this, 'fallbackCallback')
+      i3shade.callbacks.fallback = fallbackSpy
+
+      // Write the response directly from the server
+      bindsymResp = require('./data-mocks/ev_binding_focus-mode-toggle.json')
+      globals.__I3_MOCK_SERVER__._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(bindsymResp)))
+    })
+  })
 })

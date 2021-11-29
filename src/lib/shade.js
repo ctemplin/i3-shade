@@ -58,15 +58,20 @@ class Shade {
         this.fallbackCom &&
         (this.modeToggleTimeout == undefined || this.modeToggleTimeout?._destroyed)
       ) {
-        clearTimeout(this.modeToggleTimeout)
-        this.i3.command(this.fallbackCom)
-      }
+        this.i3.command(
+          this.fallbackCom,
+          this.callbacks.fallback?.bind(this)
+        )
+      } else clearTimeout(this.modeToggleTimeout)
     }
   }
 
   handleWindowEvent = async function(event) {
     this.fcsdWinId = event.container.id
     this.fcsdWinMarks = event.container.marks
+    if (event.change == 'mark') {
+      this.callbacks.unmarkShaded?.call(this, null, event)
+    }
     if (event.change == 'focus') {
       this.modeToggleTimeout = setTimeout(
         () => {clearTimeout(this.modeToggleTimeout)},
@@ -127,7 +132,6 @@ class Shade {
               if (err) {
                 console.error(err)
               }
-              this.callbacks.unmarkShaded?.call(this, err, resp)
             }
           )
         }

@@ -1,0 +1,11 @@
+{
+  "change": "run",
+  "binding":
+  {
+    "command": "focus mode_toggle",
+    "event_state_mask": [ "mod4" ],
+    "input_code": 0,
+    "symbol": "space",
+    "input_type": "keyboard"
+  }
+}

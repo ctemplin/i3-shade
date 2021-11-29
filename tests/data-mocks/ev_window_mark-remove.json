@@ -1,0 +1,17 @@
+{
+  "change": "mark",
+  "container":
+  {
+    "id": 35569536,
+    "type": "con",
+    "focused": true,
+    "marks": [],
+    "floating": true,
+    "deco_rect": {
+      "x": 0,
+      "y": 0,
+      "width": 800,
+      "height": 24
+    }
+  }
+}

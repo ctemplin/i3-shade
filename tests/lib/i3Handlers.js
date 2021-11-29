@@ -32,8 +32,20 @@ function handleMessage(server) {
         resp = server.responses.focus
         server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
       }
-      if (payloadSegs[1] == "mark") {
-
+      if (payload == "focus mode_toggle") {
+        resp = server.responses.focus
+        server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
+      }
+      if (payloadSegs[0] == "unmark") {
+        server._stream.write(
+          encodeCommand(
+            commandCodeFromName['COMMAND'],
+            '[{"success": true}]'
+          )
+        )
+        resp = server.responses.unmark
+        server._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)))
+        break;
       }
       server._stream.write(
         encodeCommand(
