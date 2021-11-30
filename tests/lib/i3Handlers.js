@@ -1,5 +1,5 @@
 const { globals } = require('../../jest.config.js')
-const { encodeCommand, commandNameFromCode, commandCodeFromName, eventCodeFromName } = require('./i3MockServer')
+const { encodeCommand, commandNameFromCode, commandCodeFromName, eventCodeFromName } = require('i3-mock-server')
 
 function handleMessage(server) {
   let comCode = server._message.code

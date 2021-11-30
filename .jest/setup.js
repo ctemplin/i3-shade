@@ -1,6 +1,6 @@
 const { globals } = require('../jest.config');
 const path = require('path');
-const { I3MockServer } = require('../tests/lib/i3MockServer')
+const { I3MockServer } = require('i3-mock-server')
 const { handleMessage } = require('../tests/lib/i3Handlers')
 
 var server

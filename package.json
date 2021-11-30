@@ -33,6 +33,7 @@
     "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
+    "i3-mock-server": "file:../i3-mock-server",
     "jest": "^27.3.1"
   }
 }

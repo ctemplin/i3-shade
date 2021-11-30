@@ -1,5 +1,5 @@
 const { globals } = require("../jest.config")
-const { encodeCommand, eventCodeFromName } = require("./lib/i3MockServer")
+const { encodeCommand, eventCodeFromName } = require("i3-mock-server")
 
 describe('IPC daemon', () => {
   it('gets the global socket', () => {
