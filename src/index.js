@@ -1,6 +1,8 @@
 #!/usr/bin/env -S node --title=i3-shade
 
-const usage = "usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>] [--command=<string>] [--fallback=<string>]"
+const usage = 
+"usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]\n\
+                [--command=<string>] [--fallback=<string>]"
 
 const argDefaults = {
   prefix: "shade",
@@ -35,7 +37,7 @@ if (args.h || args.help) {
                   the shading exemption for the focused window. \n\
     --fallback=<string>\n\
                   Defaults to null. An i3 command to run if the 'focus mode_toggle'\n\
-                  command cannot find an elible window to focus.\n\
+                  command cannot find an eligible window to focus.\n\
 ");
   process.exit(0);
 }
