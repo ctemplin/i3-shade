@@ -81,9 +81,9 @@ class Shade {
       // Tiled window focused
       if (['user_off', 'auto_off'].includes(float_val) ) {
         this.i3.tree((err, resp) => {
-          //Get all the floating containers on the current workspace
+          //Get all the floating containers on the current output/workspace
           let fnodes = resp.
-          nodes.find(_ => _.type == 'output' && _.name != '__i3').
+          nodes.find(_ => _.name != '__i3' && resp.focus.includes(_.id)).
           nodes.find(_ => _.type == 'con' && _.name == 'content').
           nodes.find(_ => _.type == 'workspace' && _.num == this.fcsdWsNum).
           floating_nodes.flatMap(_ => _.nodes);
