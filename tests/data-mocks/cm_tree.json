@@ -2,8 +2,14 @@
   "id": 6875648,
   "type": "root",
   "name": "root",
-  "focus": [6878320],
+  "focus": [1111111, 6878320],
   "nodes": [
+    {
+      "id": 1111111,
+      "name": "__i3",
+      "type": "output",
+      "nodes": []
+    },
     {
       "id": 6878320,
       "name": "LVDS1",
