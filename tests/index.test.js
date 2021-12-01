@@ -176,7 +176,7 @@ describe('i3-shade', () => {
   })
 
   describe('when fallback is defined', () => {
-    it('calls the fallback', done => {
+    it('calls the fallback if needed', done => {
       this.fallbackCallback = function(err, json) {
         expect(json[0].success).toBeTruthy()
         done()
@@ -190,6 +190,36 @@ describe('i3-shade', () => {
       // Write the response directly from the server
       bindsymResp = require('./data-mocks/ev_binding_focus-mode-toggle.json')
       globals.__I3_MOCK_SERVER__._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(bindsymResp)))
+    })
+
+    it('skips the fallback if not needed', done => {
+      this.fallbackCallback = function(err, json) {
+        done('error: the fallback should not have been called')
+      }
+
+      cb = function() {
+        expect(fallbackSpy).not.toHaveBeenCalled()
+        done()
+      }
+
+      // Ensure shade has a fallback command
+      i3shade.fallbackCom = 'nop fake'
+      fallbackSpy = jest.spyOn(this, 'fallbackCallback')
+      i3shade.callbacks.fallback = fallbackSpy
+
+      
+      let resp = require('./data-mocks/ev_window_focus.json')
+      resp.container.floating = "user_off"
+      resp.container.marks = []
+      // Trigger a window focus event
+      // Commenting out next line will trigger the fallbackCallback error
+      globals.__I3_MOCK_SERVER__._stream.write(encodeCommand(eventCodeFromName['window'], JSON.stringify(resp)), cb)
+
+      // Immediately follow with a focus toggle binding event
+      let bindsymResp = require('./data-mocks/ev_binding_focus-mode-toggle.json')
+      globals.__I3_MOCK_SERVER__._stream.write(encodeCommand(eventCodeFromName['binding'], JSON.stringify(bindsymResp)), 
+        () => { expect(fallbackSpy).not.toHaveBeenCalled() }
+      )
     })
   })
 })
