@@ -47,6 +47,7 @@ describe('i3-shade', () => {
 
   beforeEach(() => {
     // Reset properties to baseline state
+    i3shade.fallbackCom = null
     i3shade.modeToggleTimeout = null
     i3server.responses = {}
     i3server.responses.workspaces = require('./data-mocks/cm_workspaces_initial.json')
@@ -176,14 +177,16 @@ describe('i3-shade', () => {
   })
 
   describe('when fallback is defined', () => {
+    beforeEach(() => {
+      i3shade.fallbackCom = 'nop mock_command'
+    })
+
     it('calls the fallback if needed', done => {
       this.fallbackCallback = function(err, json) {
         expect(json[0].success).toBeTruthy()
         done()
       }
 
-      // Ensure shade has a fallback command
-      i3shade.fallbackCom = 'nop fake'
       fallbackSpy = jest.spyOn(this, 'fallbackCallback')
       i3shade.callbacks.fallback = fallbackSpy
 
@@ -193,20 +196,17 @@ describe('i3-shade', () => {
     })
 
     it('skips the fallback if not needed', done => {
-      this.fallbackCallback = function(err, json) {
-        done('error: the fallback should not have been called')
-      }
-
       cb = function() {
         expect(fallbackSpy).not.toHaveBeenCalled()
         done()
       }
 
-      // Ensure shade has a fallback command
-      i3shade.fallbackCom = 'nop fake'
+      this.fallbackCallback = function(err, json) {
+        done('error: the fallback should not have been called')
+      }
+
       fallbackSpy = jest.spyOn(this, 'fallbackCallback')
       i3shade.callbacks.fallback = fallbackSpy
-
       
       let resp = require('./data-mocks/ev_window_focus.json')
       resp.container.floating = "user_off"
