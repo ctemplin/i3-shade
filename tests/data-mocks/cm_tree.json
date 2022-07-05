@@ -25,6 +25,12 @@
               "type": "workspace",
               "name": "1",
               "num": 1,
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
               "floating_nodes": [
                 {
                   "id": 94606801952816,

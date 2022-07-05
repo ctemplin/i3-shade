@@ -81,11 +81,13 @@ class Shade {
       // Tiled window focused
       if (['user_off', 'auto_off'].includes(float_val) ) {
         this.i3.tree((err, resp) => {
-          //Get all the floating containers on the current output/workspace
-          let fnodes = resp.
+          // Get the focused workspace node
+          let wsnode = resp.
           nodes.find(_ => _.name != '__i3' && _.id == resp.focus[0]).
           nodes.find(_ => _.type == 'con' && _.name == 'content').
-          nodes.find(_ => _.type == 'workspace' && _.num == this.fcsdWsNum).
+          nodes.find(_ => _.type == 'workspace' && _.num == this.fcsdWsNum)
+          // Get all the floating containers on the current output/workspace
+          let fnodes = wsnode.
           floating_nodes.flatMap(_ => _.nodes);
 
           const isNormalOrUnknown = function(node) {
@@ -104,9 +106,11 @@ class Shade {
           // Filter for eligble windows and loop through them.
           fnodes.filter(node => isEligible(node)).map(node => {
             let winHeight = node.rect.height + node.deco_rect.height - this.peekMargin
+            // Calculate the offset, in case the workspace's display's vertical rect doesn't start at 0
+            let winOffset = winHeight - wsnode.rect.y
             let markCom = sprintf(
               '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
-              node.id, this.markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winHeight
+              node.id, this.markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winOffset
             )
             this.i3.command(
               markCom,
