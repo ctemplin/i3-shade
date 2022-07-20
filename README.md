@@ -68,21 +68,24 @@ $ i3-msg restart
 ~~~
 i3-shade
     usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]
+                    [--command=<string>] [--fallback=<string>]
     -h            Show brief usage summary.
     --help        Show this message.
     --prefix=<string>
                   Defaults to "shade". Included in mark that stores 
                   floating window position. No need to set unless default
                   conflicts with other marks.
-                  <prefix>_<x>_<y>_<con_id>
+                  <prefix>_<x>_<y>_<con_id> 
     --exempt=<string>
                   Defaults to "shade_exempt". Included in mark that exempts
                   containers from shading. No need to set unless default
                   conflicts with other marks.
-                  _<exempt>_<con_id>
+                  _<exempt>_<con_id> 
+    --socketpath=<string>
+                  Defaults to output of `i3 --get-socketpath`.
     --command=<string>
                   Defaults to "nop i3-shade-exempt". The i3 command to toggle
-                  the shading exemption for the focused window.
+                  the shading exemption for the focused window. 
     --fallback=<string>
                   Defaults to null. An i3 command to run if the 'focus mode_toggle'
                   command cannot find an eligible window to focus.
