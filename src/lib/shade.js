@@ -105,12 +105,13 @@ class Shade {
 
           // Filter for eligble windows and loop through them.
           fnodes.filter(node => isEligible(node)).map(node => {
-            let winHeight = node.rect.height + node.deco_rect.height - this.peekMargin
+            // let winHeight = node.rect.height + node.deco_rect.height - this.peekMargin
+            let winHeight = node.rect.height - this.peekMargin
             // Calculate the offset, in case the workspace's display's vertical rect doesn't start at 0
             let winOffset = winHeight - wsnode.rect.y
             let markCom = sprintf(
               '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
-              node.id, this.markPref, node.rect.x, node.rect.y, node.id, node.rect.x, winOffset
+              node.id, this.markPref, node.rect.x, node.rect.y + node.deco_rect.height, node.id, node.rect.x, winOffset
             )
             this.i3.command(
               markCom,
