@@ -108,7 +108,8 @@ class Shade {
             // let winHeight = node.rect.height + node.deco_rect.height - this.peekMargin
             let winHeight = node.rect.height - this.peekMargin
             // Calculate the offset, in case the workspace's display's vertical rect doesn't start at 0
-            let winOffset = winHeight - wsnode.rect.y
+            // let winOffset = winHeight - wsnode.rect.y
+            let winOffset = winHeight - Math.max(0, wsnode.rect.y)
             let markCom = sprintf(
               '[con_id=%s] mark --add %s%d_%d_%s, move position %d px -%d px',
               node.id, this.markPref, node.rect.x, node.rect.y + node.deco_rect.height, node.id, node.rect.x, winOffset
