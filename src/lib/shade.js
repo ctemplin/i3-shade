@@ -104,7 +104,8 @@ class Shade {
           }
 
           // Filter for eligble windows and loop through them.
-          fnodes.filter(node => isEligible(node)).map(node => {
+          let elNodes = fnodes.filter(node => isEligible(node))
+          elNodes.forEach(node => {
             // let winHeight = node.rect.height + node.deco_rect.height - this.peekMargin
             let winHeight = node.rect.height - this.peekMargin
             // Calculate the offset, in case the workspace's display's vertical rect doesn't start at 0
