@@ -2,14 +2,14 @@ const sprintf = require('sprintf-js').sprintf
 
 class Shade {
 
-  constructor(markPref, exemptMarkPref, socketPath, exemptComStr, fallbackCom) {
+  constructor(markPref, exemptMarkPref, socketPath, exemptComStr, fallbackCom, peekMargin) {
     this.markPref = markPref
     this.exemptMarkPref = exemptMarkPref
     this.socketPath = socketPath
     this.exemptComStr = exemptComStr
 
     this.exemptMarkPat = exemptMarkPref + "%s"
-    this.peekMargin = 2;
+    this.peekMargin = peekMargin;
     this.fcsdWsNum
     this.fcsdWinId
     this.fcsdWinMarks

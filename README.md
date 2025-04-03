@@ -67,8 +67,8 @@ $ i3-msg restart
 This can also be viewed by running `i3-shade -h`
 <!-- Following block included by build script. Edit in src/help.js -->
 ~~~
-usage i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]
-                [--command=<string>] [--fallback=<string>]
+usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]
+                [--exempt=<string>] [--command=<string>] [--fallback=<string>]
 ~~~
 
 ## Options
@@ -78,6 +78,9 @@ This can also be viewed by running `i3-shade --help`
 i3-shade
     -h            Show brief usage summary.
     --help        Show this message.
+    --peek=<integer>
+                  Defaults to 2. Number of pixels that shaded windows will peek out
+                  from the screen edge. Values less than 2 will be set to 2.
     --prefix=<string>
                   Defaults to "shade". Included in mark that stores 
                   floating window position. No need to set unless default

@@ -1,9 +1,12 @@
-exports.usage = "usage i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]\n\
-                [--command=<string>] [--fallback=<string>]\n"
+exports.usage = "usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]\n\
+                [--exempt=<string>] [--command=<string>] [--fallback=<string>]\n"
 
 exports.helpText = "i3-shade\n\
     -h            Show brief usage summary.\n\
     --help        Show this message.\n\
+    --peek=<integer>\n\
+                  Defaults to 2. Number of pixels that shaded windows will peek out\n\
+                  from the screen edge. Values less than 2 will be set to 2.\n\
     --prefix=<string>\n\
                   Defaults to \"shade\". Included in mark that stores \n\
                   floating window position. No need to set unless default\n\

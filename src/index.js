@@ -6,7 +6,8 @@ const argDefaults = {
   prefix: "shade",
   exempt: "shade_exempt",
   command: "nop i3-shade-exempt",
-  fallback: null
+  fallback: null,
+  peek: 2
 }
 
 // Parse args, if any
@@ -31,6 +32,8 @@ const markPref = (args.prefix ?? argDefaults.prefix) + "_"
 const exemptMarkPref = "_" + (args.exempt ?? argDefaults.exempt) + "_"
 const socketPath = args.socketpath ?? ""
 const fallback = args.fallback ?? ""
+const peekVal = Number.parseInt(args.peek)
+const peek = Number.isInteger(peekVal) ? Math.max(argDefaults.peek, peekVal) : argDefaults.peek
 
 // Extraneous options
 const argKeys = Object.keys(args).slice(1)
@@ -45,4 +48,4 @@ if (argKeys.some(isNotInDefaults)) {
 }
 
 Shade = require('./lib/shade')
-i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback).connect()
+i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback, peek).connect()

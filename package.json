@@ -9,6 +9,7 @@
   "preferGlobal": true,
   "scripts": {
     "start": "src/index.js",
+    "start-peek": "src/index.js --peek=20",
     "test": "jest --watch",
     "inspect-test": "node --inspect-brk node_modules/.bin/jest --watch --detectOpenHandles --runInBand ${1}",
     "update-readme": "scripts/update-readme.js",
