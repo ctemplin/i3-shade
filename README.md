@@ -63,12 +63,19 @@ exec_always --no-startup-id i3-shade
 $ i3-msg restart
 ~~~
 
+## Usage
+This can also be viewed by running `i3-shade -h`
+<!-- Following block included by build script. Edit in src/help.js -->
+~~~
+usage i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]
+                [--command=<string>] [--fallback=<string>]
+~~~
 
 ## Options
+This can also be viewed by running `i3-shade --help`
+<!-- Following block included by build script. Edit in src/help.js -->
 ~~~
 i3-shade
-    usage: i3-shade [-h|--help] [--prefix=<string>] [--exempt=<string>]
-                    [--command=<string>] [--fallback=<string>]
     -h            Show brief usage summary.
     --help        Show this message.
     --prefix=<string>

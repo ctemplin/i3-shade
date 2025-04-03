@@ -10,7 +10,10 @@
   "scripts": {
     "start": "src/index.js",
     "test": "jest --watch",
-    "inspect-test": "node --inspect-brk node_modules/.bin/jest --watch --detectOpenHandles --runInBand ${1}"
+    "inspect-test": "node --inspect-brk node_modules/.bin/jest --watch --detectOpenHandles --runInBand ${1}",
+    "update-readme": "scripts/update-readme.js",
+    "prebuild": "npm run update-readme",
+    "build": "echo 'Build completed'"
   },
   "homepage": "https://github.com/ctemplin/i3-shade",
   "repository": {
