@@ -69,6 +69,7 @@ This can also be viewed by running `i3-shade -h`
 ~~~
 usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]
                 [--exempt=<string>] [--command=<string>] [--fallback=<string>]
+                [--urgent]
 ~~~
 
 ## Options
@@ -99,4 +100,7 @@ i3-shade
     --fallback=<string>
                   Defaults to null. An i3 command to run if the 'focus mode_toggle'
                   command cannot find an eligible window to focus.
+    --urgent
+                  EXPERIMENTAL: Make shaded windows more prominent by marking them
+                  urgent. Requires the 'wmctrl' system command.
 ~~~

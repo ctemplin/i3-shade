@@ -1,8 +1,9 @@
 const sprintf = require('sprintf-js').sprintf
+const exec = require('child_process').exec
 
 class Shade {
 
-  constructor(markPref, exemptMarkPref, socketPath, exemptComStr, fallbackCom, peekMargin) {
+  constructor(markPref, exemptMarkPref, socketPath, exemptComStr, fallbackCom, peekMargin, doUrgent) {
     this.markPref = markPref
     this.exemptMarkPref = exemptMarkPref
     this.socketPath = socketPath
@@ -21,6 +22,8 @@ class Shade {
     
     this.fallbackCom = fallbackCom
     this.modeToggleTimeout
+
+    this.doUrgent = doUrgent
   }
 
   connect = function(callbacks) {
@@ -125,6 +128,28 @@ class Shade {
               }
             )
           })
+          if (this.doUrgent) {
+            elNodes.forEach(node => {
+              let winIdD = node.window
+              let winIdX = sprintf('0x%x', winIdD)
+              console.log(winIdD, winIdX)
+              let urgentCom = sprintf(
+                'wmctrl -i -r %s -v -b %s',
+                winIdX,
+                'add,demands_attention'
+              )
+              exec(urgentCom,
+                ((error, stdout, stderr) => {
+                  if (error) {
+                    console.log(`${error.name}: ${error.message}`);
+                    return;
+                  }
+                  console.log(`stdout: ${stdout}`)
+                  console.log(`stderr: ${stderr}`)
+                })
+              )
+            })
+          }
         })
       }
       // Floating window focused

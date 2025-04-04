@@ -1,5 +1,6 @@
 exports.usage = "usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]\n\
-                [--exempt=<string>] [--command=<string>] [--fallback=<string>]\n"
+                [--exempt=<string>] [--command=<string>] [--fallback=<string>]\n\
+                [--urgent]\n"
 
 exports.helpText = "i3-shade\n\
     -h            Show brief usage summary.\n\
@@ -24,4 +25,7 @@ exports.helpText = "i3-shade\n\
                   the shading exemption for the focused window. \n\
     --fallback=<string>\n\
                   Defaults to null. An i3 command to run if the 'focus mode_toggle'\n\
-                  command cannot find an eligible window to focus.\n"
+                  command cannot find an eligible window to focus.\n\
+    --urgent\n\
+                  EXPERIMENTAL\: Make shaded windows more prominent by marking them\n\
+                  urgent. Requires the 'wmctrl' system command.\n"

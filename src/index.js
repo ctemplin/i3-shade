@@ -7,7 +7,8 @@ const argDefaults = {
   exempt: "shade_exempt",
   command: "nop i3-shade-exempt",
   fallback: null,
-  peek: 2
+  peek: 2,
+  urgent: false
 }
 
 // Parse args, if any
@@ -34,6 +35,7 @@ const socketPath = args.socketpath ?? ""
 const fallback = args.fallback ?? ""
 const peekVal = Number.parseInt(args.peek)
 const peek = Number.isInteger(peekVal) ? Math.max(argDefaults.peek, peekVal) : argDefaults.peek
+const doUrgent = Boolean(args.urgent)
 
 // Extraneous options
 const argKeys = Object.keys(args).slice(1)
@@ -48,4 +50,4 @@ if (argKeys.some(isNotInDefaults)) {
 }
 
 Shade = require('./lib/shade')
-i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback, peek).connect()
+i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback, peek, doUrgent).connect()

@@ -9,7 +9,9 @@
   "preferGlobal": true,
   "scripts": {
     "start": "src/index.js",
+    "start-urgent": "src/index.js --urgent",
     "start-peek": "src/index.js --peek=20",
+    "start-peek-urgent": "src/index.js --peek=20 --urgent",
     "test": "jest --watch",
     "inspect-test": "node --inspect-brk node_modules/.bin/jest --watch --detectOpenHandles --runInBand ${1}",
     "update-readme": "scripts/update-readme.js",
