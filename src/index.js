@@ -1,10 +1,14 @@
 #!/usr/bin/env -S node --title=i3-shade
+const exec = require('child_process').exec
 
 const { usage, helpText } = require('./help')
 
 const argDefaults = {
   prefix: "shade",
   exempt: "shade_exempt",
+  exemptCallbackExec: ":", // no operation
+  // exemptCallbackExec: 'notify-send -u normal -t 750 "I3-SHADE: Exempt Toggled"',
+  // exemptCallbackExec: "source ~/.bashrc.d/i3-current-workspace.sh && i3-notify-has-mark _shade_exempt",
   command: "nop i3-shade-exempt",
   fallback: null,
   peek: 2,
@@ -31,6 +35,7 @@ if (args.prefix && args.prefix.indexOf("_") > -1) {
 const exemptComStr = args.command ?? argDefaults.command
 const markPref = (args.prefix ?? argDefaults.prefix) + "_"
 const exemptMarkPref = "_" + (args.exempt ?? argDefaults.exempt) + "_"
+const exemptCallbackExec = (args.exemptCallbackExec ?? argDefaults.exemptCallbackExec)
 const socketPath = args.socketpath ?? ""
 const fallback = args.fallback ?? ""
 const peekVal = Number.parseInt(args.peek)
@@ -49,5 +54,27 @@ if (argKeys.some(isNotInDefaults)) {
   process.exit(1)
 }
 
-Shade = require('./lib/shade')
-i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback, peek, doUrgent).connect()
+Shade = require('./lib/shade') 
+i3shade = new Shade(markPref, exemptMarkPref, socketPath, exemptComStr, fallback, peek, doUrgent)
+  .connect(
+    callbacks = {
+      markExempt:
+        (stream) => exec('bash -c "$EXEMPT_CALLBACK_EXEC"',
+        { env: 
+          {
+            ...process.env,
+            // NOTE: the following two envars are needed by i3/notify-send
+            // DISPLAY: process.env.DISPLAY || ':0',
+            // DBUS_SESSION_BUS_ADDRESS: process.env.DBUS_SESSION_BUS_ADDRESS,
+            EXEMPT_CALLBACK_EXEC: exemptCallbackExec
+          } 
+        },
+        ((error, stdout, stderr) => {
+          if (error) {
+            console.log(`${error.name}: ${error.message}`);
+            return;
+          }
+        })
+      )
+    }
+  )
