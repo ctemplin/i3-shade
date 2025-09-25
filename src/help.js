@@ -1,6 +1,6 @@
 exports.usage = "usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]\n\
-                [--exempt=<string>] [--command=<string>] [--fallback=<string>]\n\
-                [--urgent]\n"
+                [--exempt=<string>] [--exemptCallbackExec=<string>]\n\
+                [--command=<string>] [--fallback=<string>] [--urgent]\n"
 
 exports.helpText = "i3-shade\n\
     -h            Show brief usage summary.\n\
@@ -18,6 +18,9 @@ exports.helpText = "i3-shade\n\
                   containers from shading. No need to set unless default\n\
                   conflicts with other marks.\n\
                   _<exempt>_<con_id> \n\
+    --exemptCallbackExec=<string>\n\
+                  Defaults to no operation (\":\"). Bash command that executes when\n\
+                  an exempt mark is toggled.\n\
     --socketpath=<string>\n\
                   Defaults to output of `i3 --get-socketpath`.\n\
     --command=<string>\n\

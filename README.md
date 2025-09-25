@@ -68,8 +68,8 @@ This can also be viewed by running `i3-shade -h`
 <!-- Following block included by build script. Edit in src/help.js -->
 ~~~
 usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string>]
-                [--exempt=<string>] [--command=<string>] [--fallback=<string>]
-                [--urgent]
+                [--exempt=<string>] [--exemptCallbackExec=<string>]
+                [--command=<string>] [--fallback=<string>] [--urgent]
 ~~~
 
 ## Options
@@ -92,6 +92,9 @@ i3-shade
                   containers from shading. No need to set unless default
                   conflicts with other marks.
                   _<exempt>_<con_id> 
+    --exemptCallbackExec=<string>
+                  Defaults to no operation (":"). Bash command that executes when
+                  an exempt mark is toggled.
     --socketpath=<string>
                   Defaults to output of `i3 --get-socketpath`.
     --command=<string>
