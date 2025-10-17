@@ -105,5 +105,5 @@ i3-shade
                   command cannot find an eligible window to focus.
     --urgent
                   EXPERIMENTAL: Make shaded windows more prominent by marking them
-                  urgent. Requires the 'wmctrl' system command.
+                  urgent. Requires either 'xdotool' or  'wmctrl' system command.
 ~~~

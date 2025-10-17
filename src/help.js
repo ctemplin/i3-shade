@@ -31,4 +31,4 @@ exports.helpText = "i3-shade\n\
                   command cannot find an eligible window to focus.\n\
     --urgent\n\
                   EXPERIMENTAL\: Make shaded windows more prominent by marking them\n\
-                  urgent. Requires the 'wmctrl' system command.\n"
+                  urgent. Requires either 'xdotool' or  'wmctrl' system command.\n"

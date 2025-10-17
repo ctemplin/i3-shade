@@ -127,17 +127,22 @@ class Shade {
                 this.callbacks.markShaded?.call(this, err, resp)
               }
             )
-          })
-          if (this.doUrgent) {
-            elNodes.forEach(node => {
+            if (this.doUrgent) {
               let winIdD = node.window
               let winIdX = sprintf('0x%x', winIdD)
               console.log(winIdD, winIdX)
               let urgentCom = sprintf(
-                'wmctrl -i -r %s -v -b %s',
-                winIdX,
-                'add,demands_attention'
+                `
+                if command -v xdotoolldkjf >/dev/null 2>&1; then
+                  xdotool set_window --urgency 1 %s;
+                elif command -v wmctrl >/dev/null 2>&1; then
+                  wmctrl -i -r %s -b add,demands_attention;
+                else notify-send "Missing Dependency" "Install xdotool or wmctrl \n to set window urgency";
+                fi
+                `,
+                winIdX, winIdX
               )
+              console.log(urgentCom)
               exec(urgentCom,
                 ((error, stdout, stderr) => {
                   if (error) {
@@ -148,8 +153,8 @@ class Shade {
                   console.log(`stderr: ${stderr}`)
                 })
               )
-            })
-          }
+            }
+          })
         })
       }
       // Floating window focused
