@@ -19,8 +19,8 @@ exports.helpText = "i3-shade\n\
                   conflicts with other marks.\n\
                   _<exempt>_<con_id> \n\
     --exemptCallbackExec=<string>\n\
-                  Defaults to no operation (\":\"). Bash command that executes when\n\
-                  an exempt mark is toggled.\n\
+                  Defaults to no operation (\":\"). Shell command that executes when\n\
+                  an exempt status is toggled.\n\
     --socketpath=<string>\n\
                   Defaults to output of `i3 --get-socketpath`.\n\
     --command=<string>\n\
@@ -30,5 +30,6 @@ exports.helpText = "i3-shade\n\
                   Defaults to null. An i3 command to run if the 'focus mode_toggle'\n\
                   command cannot find an eligible window to focus.\n\
     --urgent\n\
-                  EXPERIMENTAL\: Make shaded windows more prominent by marking them\n\
-                  urgent. Requires either 'xdotool' or  'wmctrl' system command.\n"
+                  Make shaded windows more prominent by marking them urgent.\n\
+                  i3 does not expose a way to modify window urgency, so this\n\
+                  feature requires either 'xdotool' or 'wmctrl' system command.\n"
