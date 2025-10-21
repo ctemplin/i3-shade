@@ -2,6 +2,7 @@
 const exec = require('child_process').exec
 
 const { usage, helpText } = require('./help')
+const version = require('../package.json').version
 
 const argDefaults = {
   prefix: "shade",
@@ -17,6 +18,12 @@ const argDefaults = {
 
 // Parse args, if any
 const args = require('minimist')(process.argv.slice(2))
+
+if (args.v || args.version) {
+  console.log(version)
+  process.exit(0)
+}
+
 if (args.h || args.help) {
   args.h ?
   console.log(usage)

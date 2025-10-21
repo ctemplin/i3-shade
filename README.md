@@ -77,6 +77,7 @@ This can also be viewed by running `i3-shade --help`
 <!-- Following block included by build script. Edit in src/help.js -->
 ~~~
 i3-shade
+    -v, --version Show version number.
     -h            Show brief usage summary.
     --help        Show this message.
     --peek=<integer>

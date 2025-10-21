@@ -3,6 +3,7 @@ exports.usage = "usage i3-shade [-h|--help] [--peek=<integer>] [--prefix=<string
                 [--command=<string>] [--fallback=<string>] [--urgent]\n"
 
 exports.helpText = "i3-shade\n\
+    -v, --version Show version number.\n\
     -h            Show brief usage summary.\n\
     --help        Show this message.\n\
     --peek=<integer>\n\
