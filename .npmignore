@@ -1,6 +1,11 @@
 # dependencies
 /node_modules
 
+# source control
+/.github
+README.md
+/README
+
 # debug
 npm-debug.log*
 yarn-debug.log*
