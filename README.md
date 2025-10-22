@@ -1,6 +1,10 @@
 # i3-shade
 Auto show/hide floating windows in the [i3 window manager](https://github.com/i3/i3).
 
+![animation of i3-shade](https://raw.githubusercontent.com/ctemplin/i3-shade/main/README/i3-shade-anim.webp)
+
+Effortlessly move floating windows out of your way and then back to their original position whenever focus changes between a tiling window and a floating one. Unfocused, floating windows peak slightly out from the top of screen for a unobstrusive visual reminder and clickability. Each floating window can be exempted to perform the default i3 behavior.
+
 ## Install
 ### from npm:
 ~~~
