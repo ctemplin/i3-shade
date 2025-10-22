@@ -1,22 +1,2 @@
-# dependencies
-/node_modules
-
-# source control
-/.github
-README.md
-/README
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# editor
-.vscode/launch.json
-.vscode/settings.json
-*.code-workspace
-
-# tests
-/tests
-/.jest
-jest.config.js
+# DO NOT USE
+# Instead white-list files in the "files" array in package.json
